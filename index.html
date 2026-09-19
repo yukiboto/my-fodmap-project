@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustenance | Low-FODMAP & Gluten-Free Navigator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind Config for Theme Customization -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        fodmap: {
+                            safe: '#059669', // Emerald 600
+                            moderate: '#d97706', // Amber 600
+                            avoid: '#dc2626', // Red 600
+                            dark: '#0f172a', // Slate 900
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for better styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Custom print styling */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-card {
+                border: 1px solid #e2e8f0 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+            body {
+                background-color: white !important;
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen" x-data="fodmapApp()">
+
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-500 text-white p-2.5 rounded-xl shadow-md shadow-emerald-100 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="font-outfit font-extrabold text-2xl tracking-tight bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">Sustenance</span>
+                        <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider leading-none">FODMAP & GF Navigator</span>
+                    </div>
+                </div>
+
+                <!-- Nav Tabs -->
+                <nav class="flex space-x-1 sm:space-x-2">
+                    <button 
+                        @click="activeTab = 'explore'" 
+                        :class="activeTab === 'explore' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:text-emerald-600 hover:bg-slate-50'"
+                        class="px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2"
+                    >
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />
+                        </svg>
+                        <span>Explore Foods</span>
+                    </button>
+                    
+                    <button 
+                        @click="activeTab = 'builder'" 
+                        :class="activeTab === 'builder' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:text-emerald-600 hover:bg-slate-50'"
+                        class="px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 relative"
+                    >
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span>Meal Basket</span>
+                        <template x-if="basket.length > 0">
+                            <span class="absolute -top-1 -right-1 bg-rose-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pulse" x-text="basket.length"></span>
+                        </template>
+                    </button>
+
+                    <button 
+                        @click="activeTab = 'cheat-sheet'" 
+                        :class="activeTab === 'cheat-sheet' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:text-emerald-600 hover:bg-slate-50'"
+                        class="px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2"
+                    >
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2Z" />
+                        </svg>
+                        <span>Pantry Guide</span>
+                    </button>
+                    
+                    <button 
+                        @click="showEduModal = true" 
+                        class="text-slate-400 hover:text-emerald-600 p-2 rounded-lg transition-all"
+                        title="FODMAP Stacking Education"
+                    >
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                        </svg>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Body Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- Welcome banner (dismissible) -->
+        <div x-show="showBanner" class="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-3xl p-6 sm:p-8 text-white mb-6 shadow-xl shadow-emerald-900/10 relative overflow-hidden no-print" x-transition>
+            <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-white/5 rounded-full blur-2xl"></div>
+            <div class="absolute -left-10 -top-10 w-44 h-44 bg-emerald-500/20 rounded-full blur-2xl"></div>
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="max-w-2xl">
+                    <span class="bg-white/20 text-white font-medium text-xs uppercase tracking-wider px-3 py-1 rounded-full backdrop-blur-sm">Clinical Dietary Navigator</span>
+                    <h1 class="font-outfit font-extrabold text-3xl sm:text-4xl mt-3 leading-tight">Master Low-FODMAP & Gluten-Free Living</h1>
+                    <p class="text-emerald-100/90 text-sm sm:text-base mt-2 font-medium">
+                        Eat safely without nutrient deficiency or meal monotony. Search over 75+ lab-verified ingredients, track safe thresholds, and monitor "FODMAP Stacking" in real-time.
+                    </p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button @click="activeTab = 'builder'" class="bg-white text-emerald-800 hover:bg-emerald-50 font-bold px-5 py-3 rounded-xl transition-all duration-200 text-sm shadow-md flex items-center gap-2">
+                        <span>Assemble Safe Meal</span>
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                    </button>
+                    <button @click="showBanner = false" class="text-emerald-100 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. EXPLORER TAB -->
+        <div x-show="activeTab === 'explore'" class="space-y-6" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+            
+            <!-- Filters Control Bar -->
+            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4 no-print">
+                <!-- Row 1: Search & Safety Filters -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                    <div class="relative lg:col-span-6">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />
+                            </svg>
+                        </div>
+                        <input 
+                            type="text" 
+                            x-model="searchQuery" 
+                            placeholder="Search foods, compounds (fructans, sorbitol), traps, or replacements..."
+                            class="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm transition-all outline-none"
+                        >
+                        <template x-if="searchQuery">
+                            <button @click="searchQuery = ''" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </template>
+                    </div>
+
+                    <!-- Safety Toggles -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 lg:col-span-6 lg:justify-end">
+                        <span class="text-xs font-semibold uppercase text-slate-400 tracking-wider mr-2 hidden sm:inline">Status:</span>
+                        <button 
+                            @click="toggleSafetyFilter('safe')" 
+                            :class="selectedSafeties.includes('safe') ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                            class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 shrink-0 flex items-center gap-1.5"
+                        >
+                            <span class="w-2.5 h-2.5 bg-white rounded-full"></span>
+                            <span>Safe / Generous</span>
+                        </button>
+                        <button 
+                            @click="toggleSafetyFilter('moderate')" 
+                            :class="selectedSafeties.includes('moderate') ? 'bg-amber-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                            class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 shrink-0 flex items-center gap-1.5"
+                        >
+                            <span class="w-2.5 h-2.5 bg-white rounded-full"></span>
+                            <span>Portion-Limited</span>
+                        </button>
+                        <button 
+                            @click="toggleSafetyFilter('high')" 
+                            :class="selectedSafeties.includes('high') ? 'bg-red-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                            class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 shrink-0 flex items-center gap-1.5"
+                        >
+                            <span class="w-2.5 h-2.5 bg-white rounded-full"></span>
+                            <span>High-FODMAP</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Row 2: Category Chips -->
+                <div class="border-t border-slate-100 pt-4 flex flex-wrap gap-2 items-center">
+                    <span class="text-xs font-semibold uppercase text-slate-400 tracking-wider mr-2">Category:</span>
+                    <button 
+                        @click="selectedCategory = 'All'" 
+                        :class="selectedCategory === 'All' ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'"
+                        class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150"
+                    >
+                        All Categories
+                    </button>
+                    <template x-for="cat in categories" :key="cat">
+                        <button 
+                            @click="selectedCategory = cat" 
+                            :class="selectedCategory === cat ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'"
+                            class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 flex items-center gap-1.5"
+                        >
+                            <span x-text="getCategoryIcon(cat)"></span>
+                            <span x-text="cat"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Database Stats Summary -->
+            <div class="flex items-center justify-between px-2 no-print">
+                <p class="text-sm text-slate-500">
+                    Showing <strong x-text="filteredFoods.length" class="text-slate-800"></strong> of <strong x-text="foods.length" class="text-slate-800"></strong> lab-verified items
+                </p>
+                <button 
+                    @click="resetFilters()" 
+                    x-show="searchQuery || selectedCategory !== 'All' || selectedSafeties.length < 3"
+                    class="text-xs text-emerald-600 hover:text-emerald-700 font-bold hover:underline flex items-center gap-1"
+                    x-transition
+                >
+                    Clear active filters
+                </button>
+            </div>
+
+            <!-- Food Grid Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <template x-for="food in filteredFoods" :key="food.name">
+                    <div 
+                        class="bg-white rounded-2xl border transition-all duration-300 relative flex flex-col justify-between overflow-hidden"
+                        :class="{
+                            'border-emerald-100 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-900/[0.03]': food.safety === 'safe',
+                            'border-amber-100 hover:border-amber-200 hover:shadow-lg hover:shadow-amber-900/[0.03]': food.safety === 'moderate',
+                            'border-red-100 hover:border-red-200 hover:shadow-lg hover:shadow-red-900/[0.03]': food.safety === 'high'
+                        }"
+                    >
+                        <!-- Safety side-ribbon -->
+                        <div class="absolute top-0 left-0 bottom-0 w-1.5" 
+                             :class="{
+                                 'bg-emerald-500': food.safety === 'safe',
+                                 'bg-amber-500': food.safety === 'moderate',
+                                 'bg-red-500': food.safety === 'high'
+                             }"></div>
+
+                        <div class="p-5 pl-6">
+                            <!-- Card Header -->
+                            <div class="flex items-start justify-between gap-2 mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xl" x-text="getCategoryIcon(food.category)"></span>
+                                    <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider" x-text="food.category"></span>
+                                </div>
+                                
+                                <!-- Color Badges -->
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                      :class="{
+                                          'bg-emerald-50 text-emerald-700': food.safety === 'safe',
+                                          'bg-amber-50 text-amber-700': food.safety === 'moderate',
+                                          'bg-red-50 text-red-700': food.safety === 'high'
+                                      }" x-text="food.safety === 'safe' ? 'Safe / Generous' : (food.safety === 'moderate' ? 'Portion Limit' : 'Avoid / High')">
+                                </span>
+                            </div>
+
+                            <!-- Food Name -->
+                            <h3 class="font-outfit font-bold text-lg text-slate-800 leading-tight mb-1" x-text="food.name"></h3>
+                            
+                            <!-- Portion Limit Indicator -->
+                            <p class="text-xs text-slate-500 flex items-center gap-1.5 mt-2">
+                                <span class="font-bold text-slate-600">Safe Portion:</span>
+                                <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold text-[11px]" x-text="food.limit"></span>
+                            </p>
+
+                            <!-- Mini Note -->
+                            <p class="text-xs text-slate-500 mt-3 leading-relaxed" x-text="food.notes"></p>
+
+                            <!-- Expanded Section -->
+                            <div class="mt-4 pt-4 border-t border-slate-100 space-y-3" x-show="expandedFoods.includes(food.name)" x-transition>
+                                
+                                <!-- Biochemical Factors / Compounds -->
+                                <template x-if="food.loads && Object.keys(food.loads).length > 0">
+                                    <div>
+                                        <h4 class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">FODMAP Elements Present:</h4>
+                                        <div class="flex flex-wrap gap-1">
+                                            <template x-for="(val, name) in food.loads" :key="name">
+                                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-100 flex items-center gap-1">
+                                                    <span class="w-1 h-1 bg-amber-500 rounded-full"></span>
+                                                    <span x-text="name"></span>
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- Hidden Traps -->
+                                <template x-if="food.traps">
+                                    <div class="bg-red-50/50 rounded-xl p-3 border border-red-100/50">
+                                        <div class="flex items-center gap-1.5 text-red-800 font-bold text-xs mb-1">
+                                            <svg class="w-4 h-4 text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                            <span>Hidden Ingredient Trap</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-600 leading-relaxed" x-text="food.traps"></p>
+                                    </div>
+                                </template>
+
+                                <!-- Culinary Swaps -->
+                                <template x-if="food.swaps">
+                                    <div class="bg-emerald-50/50 rounded-xl p-3 border border-emerald-100/50">
+                                        <div class="flex items-center gap-1.5 text-emerald-800 font-bold text-xs mb-1">
+                                            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+                                            <span>Recommended Swap / Hack</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-600 leading-relaxed" x-text="food.swaps"></p>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer Controls -->
+                        <div class="px-5 pb-5 pl-6 flex items-center justify-between border-t border-slate-50/80 pt-3">
+                            <button 
+                                @click="toggleFoodExpansion(food.name)" 
+                                class="text-xs font-semibold text-slate-500 hover:text-emerald-600 flex items-center gap-1 transition-all"
+                            >
+                                <span x-text="expandedFoods.includes(food.name) ? 'Hide details' : 'Show details'"></span>
+                                <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="expandedFoods.includes(food.name) ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </button>
+
+                            <button 
+                                @click="addToBasket(food)" 
+                                :disabled="food.safety === 'high'"
+                                :class="food.safety === 'high' ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-md shadow-emerald-500/10 active:scale-95'"
+                                class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-150 flex items-center gap-1"
+                            >
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                                <span>Add to Plate</span>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Empty Search Results -->
+            <div x-show="filteredFoods.length === 0" class="text-center py-16 bg-white rounded-3xl border border-slate-100 shadow-sm">
+                <div class="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z" /></svg>
+                </div>
+                <h3 class="font-outfit font-bold text-lg text-slate-800">No matching ingredients found</h3>
+                <p class="text-slate-500 text-sm mt-1 max-w-sm mx-auto">Try refining your search query or choosing a different category chip above.</p>
+                <button @click="resetFilters()" class="mt-4 bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl hover:bg-emerald-600 transition-all shadow-md">Reset Filters</button>
+            </div>
+        </div>
+
+        <!-- 2. BUILDER / BASKET TAB -->
+        <div x-show="activeTab === 'builder'" class="space-y-6" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left Hand Side: Added Foods Checklist & Portion Multiplier (lg:col-span-7) -->
+                <div class="lg:col-span-7 bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <div>
+                            <h2 class="font-outfit font-extrabold text-2xl text-slate-900 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v19m9-19h-9M3 12h18" /></svg>
+                                <span>Meal Basket & Safe Plate</span>
+                            </h2>
+                            <p class="text-xs text-slate-400 mt-0.5">Customize portions of multiple items and track the clinical stacking load.</p>
+                        </div>
+                        <button 
+                            x-show="basket.length > 0" 
+                            @click="clearBasket()" 
+                            class="text-xs font-bold text-rose-500 hover:text-rose-600 hover:underline flex items-center gap-1"
+                        >
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            <span>Clear All</span>
+                        </button>
+                    </div>
+
+                    <!-- Empty Basket State -->
+                    <div x-show="basket.length === 0" class="text-center py-16">
+                        <div class="w-20 h-20 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-dashed border-slate-200">
+                            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1,0-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0,1-1.12-1.243l1.264-12A1.125 1.125 0 0,1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 1,1-.75 0 .375.375 0 0,1 .75 0zm7.5 0a.375.375 0 1,1-.75 0 .375.375 0 0,1 .75 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-outfit font-bold text-lg text-slate-800">Your basket is currently empty</h3>
+                        <p class="text-slate-500 text-xs mt-1 max-w-sm mx-auto">Navigate back to the database and add some foods to start building your meal safe-limits profile.</p>
+                        <button @click="activeTab = 'explore'" class="mt-4 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-md">Browse Foods</button>
+                    </div>
+
+                    <!-- Basket Food List -->
+                    <div class="space-y-4" x-show="basket.length > 0">
+                        <template x-for="(item, index) in basket" :key="index">
+                            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+                                <!-- Food Info -->
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl p-2 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center" x-text="getCategoryIcon(item.category)"></span>
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <h4 class="font-outfit font-bold text-sm text-slate-800" x-text="item.name"></h4>
+                                            <span class="px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wide font-bold"
+                                                  :class="{
+                                                      'bg-emerald-100 text-emerald-800': item.safety === 'safe',
+                                                      'bg-amber-100 text-amber-800': item.safety === 'moderate',
+                                                      'bg-red-100 text-red-800': item.safety === 'high'
+                                                  }" x-text="item.safety === 'safe' ? 'Safe' : 'Limit'"></span>
+                                        </div>
+                                        <p class="text-xs text-slate-400 mt-0.5" x-text="'Serving: ' + item.limit"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Multiplier Control -->
+                                <div class="flex items-center gap-4 justify-between sm:justify-end">
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Portion Factor</span>
+                                        <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
+                                            <button 
+                                                @click="adjustMultiplier(index, -0.25)" 
+                                                class="w-6 h-6 text-slate-500 hover:bg-slate-100 rounded flex items-center justify-center transition-all font-bold"
+                                            >-</button>
+                                            <span class="w-12 text-center text-xs font-bold text-slate-800" x-text="item.multiplier.toFixed(2) + 'x'"></span>
+                                            <button 
+                                                @click="adjustMultiplier(index, 0.25)" 
+                                                class="w-6 h-6 text-slate-500 hover:bg-slate-100 rounded flex items-center justify-center transition-all font-bold"
+                                            >+</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Delete Button -->
+                                    <button 
+                                        @click="removeFromBasket(index)" 
+                                        class="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                                        title="Remove item"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Custom Meal/Plate Actions -->
+                    <div x-show="basket.length > 0" class="border-t border-slate-100 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs text-slate-500 font-semibold">100% Gluten-Free verified ingredients only</span>
+                        </div>
+                        <button 
+                            @click="window.print()" 
+                            class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs px-4.5 py-2.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+                        >
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                            <span>Print Meal Recipe</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Hand Side: Stacking Dashboard (lg:col-span-5) -->
+                <div class="lg:col-span-5 space-y-6">
+                    
+                    <!-- Clinical Dashboard -->
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6 relative overflow-hidden">
+                        
+                        <!-- Accent light -->
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl"></div>
+
+                        <div>
+                            <h3 class="font-outfit font-extrabold text-lg text-slate-900 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" /></svg>
+                                <span>FODMAP Accumulation Steth</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Real-time biochemical compounding loads for this sitting.</p>
+                        </div>
+
+                        <!-- Stacking Progress Meters -->
+                        <div class="space-y-4">
+                            <template x-for="(load, name) in stackingLoads" :key="name">
+                                <div>
+                                    <div class="flex items-center justify-between text-xs mb-1">
+                                        <span class="font-bold text-slate-700 uppercase tracking-wider text-[10px]" x-text="name"></span>
+                                        <span class="font-semibold" 
+                                              :class="load > 100 ? 'text-rose-600 font-extrabold' : (load > 70 ? 'text-amber-600' : 'text-emerald-600')"
+                                              x-text="load.toFixed(0) + '%'"></span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200/50">
+                                        <div class="h-full rounded-full transition-all duration-300"
+                                             :class="load > 100 ? 'bg-rose-500 shadow-md shadow-rose-200' : (load > 70 ? 'bg-amber-500 shadow-md shadow-amber-200' : 'bg-emerald-500')"
+                                             :style="'width: ' + Math.min(load, 100) + '%'"></div>
+                                    </div>
+                                    <!-- Compound explanation -->
+                                    <p class="text-[9px] text-slate-400 mt-1 leading-none" x-text="getCompoundExplanation(name)"></p>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- STACKING ALERT BANNER -->
+                        <template x-if="isStacked">
+                            <div class="bg-gradient-to-br from-rose-50 to-rose-100 rounded-2xl p-4 sm:p-5 border border-rose-200 shadow-sm space-y-3 animate-fade-in">
+                                <div class="flex items-start gap-3">
+                                    <div class="p-1.5 bg-rose-500 text-white rounded-lg flex items-center justify-center shrink-0">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-outfit font-extrabold text-sm text-rose-900 leading-tight">High Risk of FODMAP Stacking!</h4>
+                                        <p class="text-xs text-rose-800/90 mt-1 leading-relaxed font-medium">
+                                            The cumulative load of specific FODMAP triggers has breached safety thresholds (<span class="font-bold">100%</span>). This can compound osmotic weight and trigger severe digestive distress.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="bg-white/60 rounded-xl p-3 text-xs text-slate-700 leading-relaxed border border-rose-200/50">
+                                    <strong class="text-slate-800">Intervention Swap Advice:</strong>
+                                    <ul class="list-disc pl-4 mt-1.5 space-y-1.5 text-[11px]">
+                                        <template x-for="rec in stackingRecommendations" :key="rec">
+                                            <li x-text="rec" class="font-medium text-slate-600"></li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- CLEAN NO-STACKING MESSAGE -->
+                        <template x-if="!isStacked && basket.length > 0">
+                            <div class="bg-emerald-50 text-emerald-800 rounded-2xl p-4 border border-emerald-100 flex items-start gap-3">
+                                <div class="p-1.5 bg-emerald-500 text-white rounded-lg flex items-center justify-center shrink-0">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-outfit font-bold text-sm text-emerald-900 leading-none">Perfect Harmonious Plate!</h4>
+                                    <p class="text-[11px] text-emerald-800 mt-1.5 leading-relaxed">
+                                        Your combined food items keep FODMAP concentrations below symptomatic limits. Enjoy this safe meal confidently.
+                                    </p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Clinical Education Callout -->
+                    <div class="bg-gradient-to-br from-indigo-900 to-indigo-950 text-indigo-100 p-5 sm:p-6 rounded-2xl shadow-md border border-indigo-900/40 relative overflow-hidden">
+                        <div class="absolute -right-12 -bottom-12 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+                        <h4 class="font-outfit font-bold text-base text-white flex items-center gap-2 mb-2">
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                            <span>Why does "Stacking" matter?</span>
+                        </h4>
+                        <p class="text-xs text-indigo-200/90 leading-relaxed font-medium">
+                            FODMAP stands for Fermentable Oligosaccharides, Disaccharides, Monosaccharides, and Polyols. Individually, a portion may represent a low concentration of e.g. fructans. However, when eating several foods with low-to-moderate fructans at the same meal, they stack inside your small intestine, absorbing excess water and generating rapid fermentation by colonic bacteria.
+                        </p>
+                        <button @click="showEduModal = true" class="mt-4 text-xs font-bold text-indigo-300 hover:text-white underline flex items-center gap-1">
+                            <span>Read detailed scientific overview</span>
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. PANTRY GUIDE / CHEAT SHEET TAB -->
+        <div x-show="activeTab === 'cheat-sheet'" class="space-y-6" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+            
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6">
+                <div>
+                    <h2 class="font-outfit font-extrabold text-2xl text-slate-900 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2Z" /></svg>
+                        <span>Pantry Staples Cheat Sheet</span>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Essential gluten-free and low-FODMAP safe substitutions for clinical dietary management.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Column 1: Baking & Grains -->
+                    <div class="bg-slate-50/50 border border-slate-100 rounded-xl p-5 space-y-4">
+                        <div class="flex items-center gap-2 text-emerald-800 font-bold font-outfit text-base">
+                            <span class="text-xl">🍞</span>
+                            <span>Baking & Grain Staples</span>
+                        </div>
+                        <ul class="space-y-3.5 text-xs">
+                            <li class="border-b border-slate-100 pb-2">
+                                <strong class="text-slate-800 block">Gluten-Free Bread Trap:</strong>
+                                <p class="text-slate-500 mt-0.5 leading-relaxed">Avoid breads thickened with <span class="text-red-600 font-semibold">Inulin, Chicory Root</span>, or containing apple fiber, high fructose corn syrup, or honey.</p>
+                            </li>
+                            <li class="border-b border-slate-100 pb-2">
+                                <strong class="text-slate-800 block">Flour Alternatives:</strong>
+                                <p class="text-slate-500 mt-0.5 leading-relaxed">Stock <span class="text-emerald-700 font-semibold">White/Brown Rice Flour, Tapioca Starch, Buckwheat Flour</span>, and Potato Starch for self-baking.</p>
+                            </li>
+                            <li>
+                                <strong class="text-slate-800 block">Grains on Standby:</strong>
+                                <p class="text-slate-500 mt-0.5 leading-relaxed"><span class="text-emerald-700 font-semibold">Quinoa, White Rice, and Polenta</span> are excellent, easy-to-digest low-FODMAP, gluten-free carbs with zero stacking risks.</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 2: Aromatics & Seasonings -->
+                    <div class="bg-slate-50/50 border border-slate-100 rounded-xl p-5 space-y-4">
+                        <div class="flex items-center gap-2 text-emerald-800 font-bold font-outfit text-base">
+                            <span class="text-xl">🧄</span>
+                            <span>Alliums & Seasonings Hack</span>
+                        </div>
+                        <ul class="space-y-3.5 text-xs">
+                            <li class="border-b border-slate-100 pb-2">
+                                <strong class="text-slate-800 block">Garlic-Infused Oil Miracle:</strong>
+                                <p class="text-slate-500 mt-0.5 leading-relaxed">Garlic contains high amounts of <span class="text-red-600 font-semibold">Fructans</span> which are highly water-soluble but <span class="text-emerald-600 font-semibold">NOT oil-soluble</span>. Olive oil infused with garlic is 100% low-FODMAP and safe!</p>
+                            </li>
+                            <li class="border-b border-slate-100 pb-2">
+                                <strong class="text-slate-800 block">Spring Onion Green Tops:</strong>
+                                <p class="text-slate-500 mt-0.5 leading-relaxed">The green stalks of scallions/spring onions are completely low-FODMAP, while the white bulb is packed with fructans. Slice off and throw away the white bulb.</p>
+                            </li>
+                            <li>
+                                <strong class="text-slate-800 block">Safe Spice Checklist:</strong>
+                                <p class="text-slate-500 mt-0.5 leading-relaxed">Ginger, Cumin, Coriander, Turmeric, Paprika, Oregano, Thyme, Rosemary, and Basil are 100% safe. Always check pre-mixed taco/curry spices for hidden onion/garlic powders!</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3: Sweeteners & Fats -->
+                    <div class="bg-slate-50/50 border border-slate-100 rounded-xl p-5 space-y-4">
+                        <div class="flex items-center gap-2 text-emerald-800 font-bold font-outfit text-base">
+                            <span class="text-xl">🍯</span>
+                            <span>Sweeteners & Fats Guide</span>
+                        </div>
+                        <ul class="space-y-3.5 text-xs">
+                            <li class="border-b border-slate-100 pb-2">
+                                <strong class="text-slate-800 block">Glucose vs Fructose Balance:</strong>
+                                <p class="text-slate-500 mt-0.5 leading-relaxed">Standard table sugar (sucrose) contains balanced parts of glucose and fructose. Glucose assists fructose absorption in the gut. Therefore, <span class="text-emerald-700 font-semibold">white table sugar</span> is safe in moderation, unlike honey or agave!</p>
+                            </li>
+                            <li class="border-b border-slate-100 pb-2">
+                                <strong class="text-slate-800 block">Polyol Sweetener Warnings:</strong>
+                                <p class="text-slate-500 mt-0.5 leading-relaxed">Do not use keto-friendly or sugar-free foods containing <span class="text-red-600 font-semibold">Sorbitol, Xylitol, Mannitol, Maltitol, or Isomalt</span>. These hold extreme osmotic loads and trigger fermentation.</p>
+                            </li>
+                            <li>
+                                <strong class="text-slate-800 block">Safe Liquid Sweeteners:</strong>
+                                <p class="text-slate-500 mt-0.5 leading-relaxed"><span class="text-emerald-700 font-semibold">100% Pure Maple Syrup</span> is safe because of low fructose concentration. Rice malt syrup is also an excellent low-FODMAP substitute.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 4. FOOTER -->
+    <footer class="bg-white border-t border-slate-100 mt-12 py-8 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-400 space-y-2">
+            <p class="font-bold text-slate-500">Sustenance Low-FODMAP & Gluten-Free Navigator</p>
+            <p>Monash University guidelines inspired portion limits. Always consult a certified GI Dietitian before modifying medical nutrition therapies.</p>
+            <p class="text-[10px]">&copy; 2026 Sustenance App. Standalone Single-File Deployment.</p>
+        </div>
+    </footer>
+
+    <!-- 5. PRINT PAGE TEMPLATE (HIDDEN FOR SCREEN, ONLY VISIBLE WHEN PRINTED) -->
+    <div class="hidden print:block p-8 bg-white text-black min-h-screen">
+        <div class="flex items-center justify-between border-b-2 border-slate-800 pb-4 mb-6">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight">Sustenance Meal Report</h1>
+                <p class="text-sm text-slate-600 mt-1">Personalized Low-FODMAP & Gluten-Free Clinical Analysis</p>
+            </div>
+            <div class="text-right">
+                <p class="text-xs text-slate-400 uppercase tracking-widest">Date Generated</p>
+                <p class="text-sm font-semibold" x-text="new Date().toLocaleDateString()"></p>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Meal Composition Table -->
+            <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-800 mb-3">Plate Ingredients Composition</h3>
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-300">
+                            <th class="py-2 font-bold text-slate-700">Ingredient Name</th>
+                            <th class="py-2 font-bold text-slate-700">Category</th>
+                            <th class="py-2 font-bold text-slate-700">Base Portion Safe-Limit</th>
+                            <th class="py-2 font-bold text-slate-700 text-right">Serving Multiplier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="item in basket" :key="item.name">
+                            <tr class="border-b border-slate-200">
+                                <td class="py-2.5 font-semibold text-slate-900" x-text="item.name"></td>
+                                <td class="py-2.5 text-slate-600" x-text="item.category"></td>
+                                <td class="py-2.5 text-slate-600" x-text="item.limit"></td>
+                                <td class="py-2.5 font-bold text-slate-900 text-right" x-text="item.multiplier.toFixed(2) + 'x'"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Stacking Profile Printout -->
+            <div class="grid grid-cols-2 gap-6">
+                <div class="border border-slate-200 p-5 rounded-xl">
+                    <h4 class="font-bold text-sm uppercase text-slate-700 mb-3 tracking-wider">FODMAP Concentration loads</h4>
+                    <div class="space-y-3 text-xs">
+                        <template x-for="(load, name) in stackingLoads" :key="name">
+                            <div>
+                                <div class="flex items-center justify-between font-semibold mb-1">
+                                    <span class="uppercase" x-text="name"></span>
+                                    <span x-text="load.toFixed(0) + '%'"></span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-slate-800 h-full" :style="'width: ' + Math.min(load, 100) + '%'"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 p-5 rounded-xl flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-sm uppercase text-slate-700 mb-2 tracking-wider">Clinical Safe Standing</h4>
+                        <template x-if="isStacked">
+                            <div class="text-rose-600 text-sm font-bold flex items-center gap-1.5">
+                                <span>⚠️ STACKING RISK breach detected</span>
+                            </div>
+                        </template>
+                        <template x-if="!isStacked">
+                            <div class="text-emerald-600 text-sm font-bold flex items-center gap-1.5">
+                                <span>✓ All parameters within strict limits</span>
+                            </div>
+                        </template>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                            A cumulative value exceeding 100% indicates multiple food items contain high quantities of similar compounds. Reductions in individual multipliers are recommended to prevent intestinal water-draw or bloating.
+                        </p>
+                    </div>
+                    <div class="border-t border-slate-100 pt-3 mt-3 text-[10px] text-slate-400 italic">
+                        Calculations powered by Monash laboratory safety thresholds.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. CLINICAL EDUCATION DIALOG MODAL -->
+    <div x-show="showEduModal" class="fixed inset-0 z-50 overflow-y-auto no-print" x-transition>
+        <!-- Overlay -->
+        <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" @click="showEduModal = false"></div>
+
+        <!-- Modal container -->
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-slate-100" @click.away="showEduModal = false">
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white flex items-center justify-between">
+                    <div>
+                        <h3 class="font-outfit font-extrabold text-xl">The Science of FODMAP Stacking</h3>
+                        <p class="text-emerald-100 text-xs mt-1">Understanding compound accumulation in irritable bowel syndromes.</p>
+                    </div>
+                    <button @click="showEduModal = false" class="text-emerald-100 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-all">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6 space-y-5 max-h-[70vh] overflow-y-auto text-sm text-slate-600">
+                    <section class="space-y-2">
+                        <h4 class="font-bold text-slate-900 text-base">What are FODMAPs?</h4>
+                        <p class="leading-relaxed text-xs">
+                            FODMAP stands for <strong class="text-slate-800">Fermentable Oligosaccharides, Disaccharides, Monosaccharides, and Polyols</strong>. These are short-chain carbohydrates (sugars) that the human digestive system sometimes struggles to fully absorb in the small intestine. Because they are poorly absorbed, they travel down into the large intestine where they serve as food for intestinal flora, undergoing rapid fermentation. This process releases gas and draws water into the colon, causing painful swelling, cramping, and bloating.
+                        </p>
+                    </section>
+
+                    <section class="space-y-2">
+                        <h4 class="font-bold text-slate-900 text-base">The 5 Core Biochemical Compounds</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs mt-2">
+                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                                <strong class="text-slate-800 block mb-0.5">1. Fructans (Oligosaccharide)</strong>
+                                <span class="text-slate-500">Found in wheat flour, garlic, onions, chicory root/inulin. Very common gut irritant.</span>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                                <strong class="text-slate-800 block mb-0.5">2. GOS (Galacto-oligosaccharides)</strong>
+                                <span class="text-slate-500">Found in pulses, almonds, cashews, and un-rinsed canned black beans/lentils.</span>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                                <strong class="text-slate-800 block mb-0.5">3. Excess Fructose (Monosaccharide)</strong>
+                                <span class="text-slate-500">Fructose is only absorbed well in equal ratio to glucose. Apples, pears, honey have excess fructose.</span>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                                <strong class="text-slate-800 block mb-0.5">4. Lactose (Disaccharide)</strong>
+                                <span class="text-slate-500">The sugar present in cow's milk, cream cheese, soft cheeses. Easily managed with lactose-free products.</span>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                                <strong class="text-slate-800 block mb-0.5">5. Polyols (Sugar Alcohols)</strong>
+                                <span class="text-slate-500">Sorbitol & Mannitol found in avocados, celery, stone fruits, or keto sweetener replacements like xylitol.</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="space-y-2">
+                        <h4 class="font-bold text-slate-900 text-base">What is Stacking & How Do I Prevent It?</h4>
+                        <p class="leading-relaxed text-xs">
+                            Many ingredients contain low concentrations of these compounds in small portions. However, if you combine broccoli heads, green beans, and almonds in one meal—each containing a safe portion of <strong class="text-slate-800">Sorbitol/Polyols</strong> or <strong class="text-slate-800">GOS</strong>—the sum of these compounds triggers the exact same symptoms as eating a high-FODMAP food. 
+                        </p>
+                        <p class="leading-relaxed text-xs">
+                            To prevent stacking:
+                        </p>
+                        <ul class="list-disc pl-4 space-y-1 text-xs">
+                            <li>Space meals with moderate-to-high FODMAP categories at least 3-4 hours apart.</li>
+                            <li>When mixing vegetables of the same FODMAP category, reduce their portions to 0.5x.</li>
+                            <li>Include plenty of completely "FODMAP-Free" filler foods like white rice, chicken breast, carrots, eggs, and potatoes.</li>
+                        </ul>
+                    </section>
+                </div>
+
+                <!-- Footer -->
+                <div class="bg-slate-50 px-6 py-4 flex justify-end gap-2 border-t border-slate-100">
+                    <button @click="showEduModal = false" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all">
+                        Got It, Thanks!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Embedded App State & Logic -->
+    <script>
+        function fodmapApp() {
+            return {
+                activeTab: 'explore',
+                searchQuery: '',
+                selectedCategory: 'All',
+                selectedSafeties: ['safe', 'moderate', 'high'],
+                expandedFoods: [],
+                showBanner: true,
+                showEduModal: false,
+                basket: [],
+
+                // Categories list for tabs
+                categories: [
+                    "Vegetables & Herbs",
+                    "Fruits",
+                    "Grains & Baking",
+                    "Proteins & Seeds",
+                    "Dairy & Alternatives",
+                    "Pantry & Sweeteners"
+                ],
+
+                // Expanded database of 75+ verified items across 6 categories
+                foods: [
+                    // --- VEGETABLES & HERBS (17 items) ---
+                    {
+                        name: "Arugula (Rocket)",
+                        category: "Vegetables & Herbs",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Contains zero FODMAP carbohydrates. Perfect nutrient-dense leafy filler base for safe bowls.",
+                        traps: "Watch out for pre-packaged salads with onions or onion-powder-dressed croutons.",
+                        swaps: "Use in place of high-fructan mixed spring lettuce bags.",
+                        loads: {}
+                    },
+                    {
+                        name: "Bok Choy",
+                        category: "Vegetables & Herbs",
+                        safety: "moderate",
+                        limit: "75g (approx. 1 cup)",
+                        notes: "Low in polyols up to 75g. Larger portions contain moderate sorbitol.",
+                        traps: "Sometimes served with high-fructan oyster/soy glaze containing garlic.",
+                        swaps: "If eating bok choy in stir-frys, avoid celery or green beans in the same sitting.",
+                        loads: { Polyols: 1.0 }
+                    },
+                    {
+                        name: "Broccoli Heads (Florets Only)",
+                        category: "Vegetables & Herbs",
+                        safety: "moderate",
+                        limit: "75g (approx. 3/4 cup)",
+                        notes: "Stalks are high in fructose, but heads/florets are low FODMAP up to 75g.",
+                        traps: "Frozen mixes often pack broccoli stalks with florets together.",
+                        swaps: "Trim florets tightly. Avoid broccoli stems completely.",
+                        loads: { Fructose: 1.0 }
+                    },
+                    {
+                        name: "Carrots",
+                        category: "Vegetables & Herbs",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Zero detected FODMAP content. High in beneficial beta-carotene.",
+                        traps: "Glazed or pureed carrots in restaurants often contain chicken stock with garlic/onion.",
+                        swaps: "Excellent nutrient-dense filler to increase meal volume without stacking worries.",
+                        loads: {}
+                    },
+                    {
+                        name: "Celery",
+                        category: "Vegetables & Herbs",
+                        safety: "moderate",
+                        limit: "10g (approx. 1/3 of a medium stalk)",
+                        notes: "Highly concentrated in mannitol. Portion limits are very strict.",
+                        traps: "Regularly found as an aroma base (mirepoix) in GF soups and stocks.",
+                        swaps: "Use fennel bulb slices for a similar celery-like crunch.",
+                        loads: { Polyols: 1.0 }
+                    },
+                    {
+                        name: "Cucumber",
+                        category: "Vegetables & Herbs",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Contains zero FODMAP levels due to high water content.",
+                        traps: "Bread-and-butter pickles often contain garlic and fructose corn syrups.",
+                        swaps: "Excellent snack; use sliced cucumber for dipping instead of high-FODMAP crackers.",
+                        loads: {}
+                    },
+                    {
+                        name: "Eggplant",
+                        category: "Vegetables & Herbs",
+                        safety: "moderate",
+                        limit: "75g (approx. 1 cup)",
+                        notes: "Contains moderate sorbitol above safe serving thresholds.",
+                        traps: "Baba ganoush or eggplant parmigiana almost always contains massive garlic powder doses.",
+                        swaps: "Roast with garlic-infused oil to retain flavor while remaining fully safe.",
+                        loads: { Polyols: 1.0 }
+                    },
+                    {
+                        name: "Ginger",
+                        category: "Vegetables & Herbs",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Anti-inflammatory root containing zero FODMAP sugars.",
+                        traps: "Ginger beers or carbonated drinks can use high fructose corn syrup as sweetener.",
+                        swaps: "Perfect aromatic base for replacement of garlic and onions in stir-frys.",
+                        loads: {}
+                    },
+                    {
+                        name: "Green Beans",
+                        category: "Vegetables & Herbs",
+                        safety: "moderate",
+                        limit: "75g (approx. 15 beans)",
+                        notes: "Contains sorbitol in portions exceeding 120g.",
+                        traps: "Often tossed with shallot butter or garlic in restaurants.",
+                        swaps: "Steam and dress with fresh lemon juice and sea salt for safe greens.",
+                        loads: { Polyols: 1.0 }
+                    },
+                    {
+                        name: "Kale",
+                        category: "Vegetables & Herbs",
+                        safety: "safe",
+                        limit: "75g (Moderate above 150g)",
+                        notes: "Extremely rich in minerals and fiber. Safe up to standard portions.",
+                        traps: "Store-bought kale chips often include onion powder, garlic powder, or nutritional yeast with high-FODMAP spices.",
+                        swaps: "Bake kale at home using sea salt and garlic-infused oil.",
+                        loads: { Fructans: 0.3 }
+                    },
+                    {
+                        name: "Potatoes (White & Russet)",
+                        category: "Vegetables & Herbs",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Completely gluten-free carbohydrate containing zero FODMAP starch.",
+                        traps: "Instant potato flakes often contain added wheat flour or onion extracts.",
+                        swaps: "Mash real fresh potatoes with butter, salt, and lactose-free milk.",
+                        loads: {}
+                    },
+                    {
+                        name: "Spinach, Baby",
+                        category: "Vegetables & Herbs",
+                        safety: "safe",
+                        limit: "75g (Moderate above 150g)",
+                        notes: "Young spinach leaves are lower in fructans than mature spinach.",
+                        traps: "Canned spinach concentrates fructan levels; only use fresh baby leaves.",
+                        swaps: "Use as a safe salad alternative to standard store lettuce mixtures.",
+                        loads: { Fructans: 0.5 }
+                    },
+                    {
+                        name: "Spring Onion (Green Parts Only)",
+                        category: "Vegetables & Herbs",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Fructans are highly concentrated in the white bulbs but absent in the green tops.",
+                        traps: "Ensure zero white bulb pieces are mixed in when buying pre-chopped bags.",
+                        swaps: "Discard white bulbs. Green tops provide full onion flavor with zero FODMAP reaction.",
+                        loads: {}
+                    },
+                    {
+                        name: "Tomato, Common (Beefsteak)",
+                        category: "Vegetables & Herbs",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Contains only trace fructose. Safe at high intake portions.",
+                        traps: "Canned tomato pastes or spaghetti sauces usually contain hidden garlic/onions.",
+                        swaps: "Blend fresh common tomatoes with fresh basil for a simple, safe sauce.",
+                        loads: {}
+                    },
+                    {
+                        name: "Zucchini",
+                        category: "Vegetables & Herbs",
+                        safety: "moderate",
+                        limit: "65g (approx. 1/3 cup)",
+                        notes: "Higher amounts contain fructans. Ensure strict portion limits.",
+                        traps: "Commonly packed in spiralized 'Zoodles' which can easily lead to high-volume stacking.",
+                        swaps: "Mix zucchini noodles 50/50 with safe gluten-free pasta.",
+                        loads: { Fructans: 1.0 }
+                    },
+                    {
+                        name: "Garlic",
+                        category: "Vegetables & Herbs",
+                        safety: "high",
+                        limit: "Avoid (High Fructans)",
+                        notes: "Extremely high concentration of fructan chains. One of the strongest clinical triggers.",
+                        traps: "Present in nearly all processed savory foods, stocks, gravies, and spice mixes.",
+                        swaps: "Use garlic-infused olive oil. Fructans do not dissolve in fats, transferring taste safely.",
+                        loads: { Fructans: 3.0 }
+                    },
+                    {
+                        name: "Onion (White/Red/Yellow)",
+                        category: "Vegetables & Herbs",
+                        safety: "high",
+                        limit: "Avoid (High Fructans)",
+                        notes: "Extremely high fructans. Triggers extreme osmotic gas production and spasms.",
+                        traps: "Check all restaurant foods, broths, seasonings, and gluten-free crackers.",
+                        swaps: "Use spring onion green tops or chives to recreate allium taste safely.",
+                        loads: { Fructans: 3.0 }
+                    },
+
+                    // --- FRUITS (16 items) ---
+                    {
+                        name: "Banana, Common (Ripe)",
+                        category: "Fruits",
+                        safety: "moderate",
+                        limit: "35g (approx. 1/3 banana)",
+                        notes: "As bananas ripen, starch converts to free fructose and fructans.",
+                        traps: "Gluten-Free bakery items often use fully ripe bananas as binding moisture.",
+                        swaps: "Consume firm green bananas instead, which are safe up to 100g.",
+                        loads: { Fructans: 0.7, Fructose: 0.7 }
+                    },
+                    {
+                        name: "Banana, Common (Unripe/Green)",
+                        category: "Fruits",
+                        safety: "safe",
+                        limit: "100g (1 medium)",
+                        notes: "High in resistant starch, which digests slowly with zero FODMAP load.",
+                        traps: "Ensure the banana has green tips and is firm to touch.",
+                        swaps: "Excellent source of fiber; slice onto safe gluten-free oatmeal.",
+                        loads: { Fructans: 0.2 }
+                    },
+                    {
+                        name: "Blueberries",
+                        category: "Fruits",
+                        safety: "moderate",
+                        limit: "40g (approx. 1/4 cup)",
+                        notes: "Low FODMAP at 40g. Portions above 100g contain high fructose levels.",
+                        traps: "Gluten-Free blueberry muffins contain high concentration per muffin.",
+                        swaps: "Use in small hand-counted quantities rather than eating by the bowlful.",
+                        loads: { Fructose: 1.0 }
+                    },
+                    {
+                        name: "Cantaloupe Melon",
+                        category: "Fruits",
+                        safety: "safe",
+                        limit: "120g (approx. 3/4 cup)",
+                        notes: "Safe for most IBS patients. Fructans only stack at very high portions.",
+                        traps: "Mixed fruit bowls often soak melons in high-fructose syrups.",
+                        swaps: "Purchase whole and slice yourself to prevent cross-contamination.",
+                        loads: { Fructans: 0.5 }
+                    },
+                    {
+                        name: "Grapes, Red/Green",
+                        category: "Fruits",
+                        safety: "safe",
+                        limit: "32g (approx. 6 grapes)",
+                        notes: "Strict limit at 32g; larger portions contain fructose.",
+                        traps: "Dried raisins are highly concentrated and should be avoided.",
+                        swaps: "Serve as a garnish rather than a major dessert component.",
+                        loads: { Fructose: 0.8 }
+                    },
+                    {
+                        name: "Kiwi Fruit (Green)",
+                        category: "Fruits",
+                        safety: "safe",
+                        limit: "150g (2 small fruits)",
+                        notes: "Extremely low FODMAP. High in actinidin, which aids protein digestion.",
+                        traps: "Check ready-to-drink fruit smoothies for added kiwi bases.",
+                        swaps: "Great natural bowel motility stimulant; slice into plain Greek yogurt.",
+                        loads: {}
+                    },
+                    {
+                        name: "Lemon Juice",
+                        category: "Fruits",
+                        safety: "safe",
+                        limit: "125g (1/2 cup)",
+                        notes: "Highly acidic but completely safe. Adds bright flavor with no stacking risk.",
+                        traps: "Lemonades can use high-fructose corn syrup (HFCS) as sweetener.",
+                        swaps: "Squeeze onto chicken or fish to replace onion-heavy marinades.",
+                        loads: {}
+                    },
+                    {
+                        name: "Lime Juice",
+                        category: "Fruits",
+                        safety: "safe",
+                        limit: "250g (1 cup)",
+                        notes: "Safe in massive quantities. Contains negligible FODMAP carbohydrates.",
+                        traps: "Pre-made margaritas or lime cordials contain high levels of fructose or agave.",
+                        swaps: "Squeeze onto salads or stir-frys for acidic culinary pop.",
+                        loads: {}
+                    },
+                    {
+                        name: "Mandarins",
+                        category: "Fruits",
+                        safety: "safe",
+                        limit: "90g (1 medium)",
+                        notes: "Zero detected FODMAP carbs at standard servings.",
+                        traps: "Canned mandarin segments in syrup often contain fructose.",
+                        swaps: "Eat fresh, peelable mandarins for an easy lunchbox snack.",
+                        loads: {}
+                    },
+                    {
+                        name: "Oranges",
+                        category: "Fruits",
+                        safety: "safe",
+                        limit: "130g (1 medium)",
+                        notes: "Safe sweet citrus with balanced glucose-fructose profiles.",
+                        traps: "Commercial orange juice has massive concentrated fructose loads (avoid!).",
+                        swaps: "Always eat the whole fresh fruit rather than drinking squeezed juice.",
+                        loads: {}
+                    },
+                    {
+                        name: "Papaya",
+                        category: "Fruits",
+                        safety: "safe",
+                        limit: "140g (1 cup)",
+                        notes: "Very soothing fruit with zero FODMAP carbohydrates.",
+                        traps: "Dried papaya is often sweetened with high FODMAP sweeteners.",
+                        swaps: "Excellent base for tropical morning smoothies.",
+                        loads: {}
+                    },
+                    {
+                        name: "Raspberries",
+                        category: "Fruits",
+                        safety: "moderate",
+                        limit: "60g (approx. 1/3 cup)",
+                        notes: "Sorbitol content becomes high in portions exceeding 60g.",
+                        traps: "Raspberry coulis or bakery jams are concentrated and high-polyol.",
+                        swaps: "Eat fresh or freeze and drop into water for light flavoring.",
+                        loads: { Polyols: 1.0 }
+                    },
+                    {
+                        name: "Strawberries",
+                        category: "Fruits",
+                        safety: "safe",
+                        limit: "65g (approx. 5 medium)",
+                        notes: "Safe portion up to 65g. Exceeding 100g brings high fructose stacking risks.",
+                        traps: "Commercial strawberry jams have concentrated apple juice sweeteners.",
+                        swaps: "Serve with whipped lactose-free cream for a luxurious, safe dessert.",
+                        loads: { Fructose: 1.0 }
+                    },
+                    {
+                        name: "Apples (Any Variety)",
+                        category: "Fruits",
+                        safety: "high",
+                        limit: "Avoid (High Fructose/Sorbitol)",
+                        notes: "Contains extreme levels of both excess fructose and sorbitol. Huge IBS trigger.",
+                        traps: "Used as bulk apple puree sweetener in countless Gluten-Free baked goods.",
+                        swaps: "Use papaya, kiwi, or unripe firm banana instead.",
+                        loads: { Fructose: 2.0, Polyols: 1.0 }
+                    },
+                    {
+                        name: "Pears",
+                        category: "Fruits",
+                        safety: "high",
+                        limit: "Avoid (High Fructose/Sorbitol)",
+                        notes: "Like apples, pears have very high excess fructose and sorbitol compounds.",
+                        traps: "Canned pear juices are often used to naturally sweeten baby items or GF snacks.",
+                        swaps: "Choose fresh cantaloupe or orange segments.",
+                        loads: { Fructose: 2.0, Polyols: 1.0 }
+                    },
+                    {
+                        name: "Avocado",
+                        category: "Fruits",
+                        safety: "moderate",
+                        limit: "30g (approx. 1/4 small avocado)",
+                        notes: "Packed with healthy fats, but contains significant sorbitol in standard servings.",
+                        traps: "Guacamole at restaurants is a double threat: high-FODMAP garlic/onion plus high sorbitol.",
+                        swaps: "Mash exactly 30g with lime juice and salt. Avoid pre-made store tubs.",
+                        loads: { Polyols: 1.0 }
+                    },
+
+                    // --- GRAINS & BAKING (16 items) ---
+                    {
+                        name: "Brown Rice",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "180g (cooked)",
+                        notes: "Excellent source of fiber, starch is fully digested in small intestine.",
+                        traps: "Brown rice packets can have garlic oil or wheat emulsifiers added.",
+                        swaps: "Cook dry organic grains from scratch in a simple rice cooker.",
+                        loads: {}
+                    },
+                    {
+                        name: "White Rice (Basmati / Jasmine)",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "190g (cooked)",
+                        notes: "Extremely easy to digest. Absolutely zero FODMAP content.",
+                        traps: "Pre-cooked convenience rice cups often contain onion/garlic seasoning powders.",
+                        swaps: "Cook with water or a homemade, garlic-free bone broth.",
+                        loads: {}
+                    },
+                    {
+                        name: "Quinoa (White / Red)",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "155g (cooked)",
+                        notes: "Complete protein grain that is naturally gluten-free and low-FODMAP.",
+                        traps: "Rinse well to remove saponins, which can mimic IBS irritation.",
+                        swaps: "Use in place of high-FODMAP couscous (which is made from wheat).",
+                        loads: {}
+                    },
+                    {
+                        name: "Oats, Rolled",
+                        category: "Grains & Baking",
+                        safety: "moderate",
+                        limit: "52g (dry weight)",
+                        notes: "Safe up to 52g. Exceeding 75g introduces moderate levels of GOS and fructans.",
+                        traps: "Instant oat packets often use high-FODMAP dried apples or honey flavorings.",
+                        swaps: "Make stovetop oatmeal using rolled oats, lactose-free milk, and pure maple syrup.",
+                        loads: { GOS: 0.8, Fructans: 0.5 }
+                    },
+                    {
+                        name: "Buckwheat Flour",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "100g",
+                        notes: "Despite its name, buckwheat is completely gluten-free and very low FODMAP.",
+                        traps: "Buckwheat pancake mixes often contain wheat flour fillers. Read labels!",
+                        swaps: "Use pure 100% buckwheat flour to make delicious gluten-free crêpes.",
+                        loads: {}
+                    },
+                    {
+                        name: "Cornmeal / Polenta",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "255g (cooked)",
+                        notes: "Finely ground cornstarch that is highly digestible and gluten-free.",
+                        traps: "Polenta rolls can contain dairy cream or high-lactose milk powder.",
+                        swaps: "Slice polenta, brush with garlic oil, and grill for a safe bread swap.",
+                        loads: {}
+                    },
+                    {
+                        name: "Gluten-Free Bread (Commercial)",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "2 slices (62g)",
+                        notes: "Ensures safety from wheat gluten, but check fiber additives carefully.",
+                        traps: "High frequency of added Inulin (Chicory Root), Honey, or Apple fibers to keep bread moist.",
+                        swaps: "Bake homemade gluten-free bread using potato and tapioca starch.",
+                        loads: { Fructans: 0.3 }
+                    },
+                    {
+                        name: "Gluten-Free Pasta (Corn/Rice)",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "145g (cooked)",
+                        notes: "Low FODMAP and gluten-free base using corn/rice combinations.",
+                        traps: "Avoid GF pastas crafted from high-FODMAP bean flours like chickpea or lentil.",
+                        swaps: "Always purchase 100% white/brown rice or corn-based dried pasta.",
+                        loads: {}
+                    },
+                    {
+                        name: "Rice Flour (White / Brown)",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "100g",
+                        notes: "Highly versatile baking starch with zero FODMAP carbohydrates.",
+                        traps: "Check for anti-caking compounds if pre-blended into custom flour mixes.",
+                        swaps: "Use as a direct thickening agent for sauces instead of wheat roux.",
+                        loads: {}
+                    },
+                    {
+                        name: "Tapioca Flour / Starch",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "100g",
+                        notes: "Derived from cassava root. Completely gluten-free and low-FODMAP.",
+                        traps: "Do not confuse with high-FODMAP sweet potato flours.",
+                        swaps: "Perfect for creating stretchy texture in gluten-free baking.",
+                        loads: {}
+                    },
+                    {
+                        name: "Potato Starch",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "100g",
+                        notes: "Pure starch isolate. Highly tolerated in clinical gut trials.",
+                        traps: "Ensure you buy pure potato starch, not instant mashed potato powder.",
+                        swaps: "Blend with rice flour for an excellent GF all-purpose flour baking mix.",
+                        loads: {}
+                    },
+                    {
+                        name: "Sorghum Flour",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "100g",
+                        notes: "Ancient whole grain flour. Safe and high-fiber.",
+                        traps: "Uncommon staple that can be processed on shared wheat machinery.",
+                        swaps: "Provides a delicious, wheat-like crumb in gluten-free breads.",
+                        loads: {}
+                    },
+                    {
+                        name: "Millet (Hulled Grain)",
+                        category: "Grains & Baking",
+                        safety: "safe",
+                        limit: "100g (dry weight)",
+                        notes: "A wonderful, nutty grain with very high B-vitamins and zero FODMAPs.",
+                        traps: "Ensure the pack is certified gluten-free (sometimes rotated with barley crops).",
+                        swaps: "Use as a safe morning cereal similar to porridge or cream of wheat.",
+                        loads: {}
+                    },
+                    {
+                        name: "Wheat Flour (White/Whole)",
+                        category: "Grains & Baking",
+                        safety: "high",
+                        limit: "Avoid (High Fructans & Gluten)",
+                        notes: "Contains high levels of fructan chains and is NOT gluten-free. Serious IBS/Celiac trigger.",
+                        traps: "Present in all standard breads, pastas, pastries, and breadcrumbs.",
+                        swaps: "Substitute with Rice, Tapioca, or Buckwheat flours.",
+                        loads: { Fructans: 2.0 }
+                    },
+                    {
+                        name: "Rye Flour",
+                        category: "Grains & Baking",
+                        safety: "high",
+                        limit: "Avoid (High Fructans & Gluten)",
+                        notes: "Highly concentrated fructans and contains gluten. Not suitable.",
+                        traps: "Often present in high-fiber multigrain bakery slices or crispbreads.",
+                        swaps: "Choose 100% corn-based GF crispbreads.",
+                        loads: { Fructans: 2.0 }
+                    },
+                    {
+                        name: "Barley",
+                        category: "Grains & Baking",
+                        safety: "high",
+                        limit: "Avoid (High Fructans & GOS)",
+                        notes: "Rich in fructans and GOS (galacto-oligosaccharides). Contains gluten.",
+                        traps: "Regularly added to commercial broths, vegetable canned soups, or multi-grain cereals.",
+                        swaps: "Use brown rice or quinoa in soups.",
+                        loads: { Fructans: 2.0, GOS: 1.0 }
+                    },
+
+                    // --- PROTEINS & SEEDS (16 items) ---
+                    {
+                        name: "Chicken Breast",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Pure protein source containing absolutely no FODMAP sugars. Perfect safety rating.",
+                        traps: "Rotisserie or pre-marinated chicken breasts are saturated in garlic/onion powder.",
+                        swaps: "Buy fresh organic raw chicken, season with salt, pepper, and garlic-infused oil.",
+                        loads: {}
+                    },
+                    {
+                        name: "Beef, Lean Cuts",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "FODMAPs are carbohydrates; animal proteins have zero sugars.",
+                        traps: "Pre-packed burgers or meatloaf contain wheat crumbs (gluten) and onion pieces.",
+                        swaps: "Form your own burger patties with pure ground beef and fresh herbs.",
+                        loads: {}
+                    },
+                    {
+                        name: "Pork (Tenderloin / Chops)",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Zero FODMAP and naturally gluten-free protein source.",
+                        traps: "Pork sausages or bacon can use wheat fillers, onion extracts, or high-fructose cures.",
+                        swaps: "Ensure bacon is dry-cured with simple cane sugar and no artificial celery powders.",
+                        loads: {}
+                    },
+                    {
+                        name: "Salmon, Fresh",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Rich in anti-inflammatory Omega-3 fatty acids, with zero sugar or gluten.",
+                        traps: "Avoid pre-seasoned salmon containing soy sauce with wheat or honey glazes.",
+                        swaps: "Pan-sear fresh salmon with olive oil, rosemary, and lemon juice.",
+                        loads: {}
+                    },
+                    {
+                        name: "Eggs",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Highly bioavailable protein source with zero FODMAP footprint.",
+                        traps: "Scrambled eggs in buffets often contain high-lactose cow's milk.",
+                        swaps: "Prepare scrambles using pure eggs, salt, and lactose-free milk or water.",
+                        loads: {}
+                    },
+                    {
+                        name: "Tofu, Firm / Extra-Firm",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "170g (approx. 1 cup block)",
+                        notes: "GOS is water-soluble. Firm tofu is pressed, draining out most FODMAPs into the water.",
+                        traps: "Silken tofu is NOT pressed and retains high amounts of GOS (avoid!).",
+                        swaps: "Always purchase Firm or Extra-Firm tofu, and drain thoroughly at home.",
+                        loads: { GOS: 0.2 }
+                    },
+                    {
+                        name: "Tempeh",
+                        category: "Proteins & Seeds",
+                        safety: "moderate",
+                        limit: "100g",
+                        notes: "Fermented soy protein. Contains small amounts of GOS and fructans.",
+                        traps: "Check for added high-FODMAP grains like barley or wheat inside artisan tempeh.",
+                        swaps: "Purchase 100% pure organic soy tempeh.",
+                        loads: { GOS: 1.0, Fructans: 0.5 }
+                    },
+                    {
+                        name: "Almonds",
+                        category: "Proteins & Seeds",
+                        safety: "moderate",
+                        limit: "12g (approx. 10 nuts)",
+                        notes: "Portion limits are highly sensitive. Larger amounts have high GOS levels.",
+                        traps: "Almond flours in Gluten-Free baking easily exceed this limit per slice.",
+                        swaps: "Swap for Macadamia nuts or Walnuts which are much safer and less reactive.",
+                        loads: { GOS: 1.0 }
+                    },
+                    {
+                        name: "Macadamia Nuts",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "40g (approx. 20 nuts)",
+                        notes: "Extremely low FODMAP. High in healthy monounsaturated fats.",
+                        traps: "Avoid chocolate-coated versions containing high lactose milk.",
+                        swaps: "Perfect snack substitute for high-FODMAP cashews or pistachios.",
+                        loads: {}
+                    },
+                    {
+                        name: "Walnuts",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "30g (approx. 10 halves)",
+                        notes: "Very safe and contains only trace FODMAP carbohydrates.",
+                        traps: "Trail mixes often cross-contaminate walnuts with dried raisins or cashews.",
+                        swaps: "An excellent crunchy garnish for salads or gluten-free oatmeal.",
+                        loads: {}
+                    },
+                    {
+                        name: "Pumpkin Seeds (Pepitas)",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "23g (approx. 2 tbsp)",
+                        notes: "Excellent source of zinc and magnesium with low FODMAP loads.",
+                        traps: "Flavored commercial seeds can contain onion powder or maltodextrin from wheat.",
+                        swaps: "Buy raw pepitas and roast them with salt and garlic-infused olive oil.",
+                        loads: {}
+                    },
+                    {
+                        name: "Sesame Seeds",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "11g (approx. 1 tbsp)",
+                        notes: "Safe garnish. High in calcium and fiber.",
+                        traps: "Tahini (sesame paste) is highly concentrated and contains GOS (safe limit: 1 tbsp).",
+                        swaps: "Lightly toast and sprinkle on top of safe stir-frys.",
+                        loads: {}
+                    },
+                    {
+                        name: "Chia Seeds",
+                        category: "Proteins & Seeds",
+                        safety: "moderate",
+                        limit: "24g (approx. 2 tbsp)",
+                        notes: "Highly absorptive fiber. Large servings contain moderate fructans.",
+                        traps: "Chia puddings in cafés are often prepared with high-lactose cow's milk or sweetened with honey.",
+                        swaps: "Prepare at home using almond milk and pure maple syrup.",
+                        loads: { Fructans: 1.0 }
+                    },
+                    {
+                        name: "Peanuts",
+                        category: "Proteins & Seeds",
+                        safety: "safe",
+                        limit: "28g (approx. 32 nuts)",
+                        notes: "Highly tolerated, safe and contains zero gluten.",
+                        traps: "Flavored 'dry roasted' peanuts are coated in high-FODMAP garlic and onion powders.",
+                        swaps: "Stick to simple salted roasted peanuts with no extra spices.",
+                        loads: {}
+                    },
+                    {
+                        name: "Black Beans (Canned & Rinsed)",
+                        category: "Proteins & Seeds",
+                        safety: "moderate",
+                        limit: "40g (approx. 1/4 cup)",
+                        notes: "Canning leaches water-soluble GOS out of beans. Thoroughly rinsing reduces FODMAPs significantly.",
+                        traps: "Dry cooked beans or un-rinsed canned beans remain extremely high in GOS (avoid!).",
+                        swaps: "Drain canned beans, wash under running water for 30 seconds before eating.",
+                        loads: { GOS: 1.0 }
+                    },
+                    {
+                        name: "Lentils (Canned & Rinsed)",
+                        category: "Proteins & Seeds",
+                        safety: "moderate",
+                        limit: "46g (approx. 1/4 cup)",
+                        notes: "Similar to black beans, GOS is water-soluble. Canning water acts as a sink.",
+                        traps: "Dried boiled lentils contain 3-4x the FODMAP concentration (avoid!).",
+                        swaps: "Always choose canned, rinse extensively, and stick to the 46g serving limit.",
+                        loads: { GOS: 1.0 }
+                    },
+
+                    // --- DAIRY & ALTERNATIVES (10 items) ---
+                    {
+                        name: "Butter",
+                        category: "Dairy & Alternatives",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "Butter is pure fat; lactose sugars are practically nonexistent. Fully safe.",
+                        traps: "Check 'spreadable' butters for added high-lactose whey powder or milk solids.",
+                        swaps: "Use high-quality grass-fed butter for cooking and baking.",
+                        loads: {}
+                    },
+                    {
+                        name: "Cheddar Cheese (Aged)",
+                        category: "Dairy & Alternatives",
+                        safety: "safe",
+                        limit: "40g (approx. 2 slices)",
+                        notes: "Aging cheeses allows bacteria to consume lactose. Aged cheeses are naturally low-lactose.",
+                        traps: "Processed cheese slices or squeezy cheese contain added high-lactose milk powders.",
+                        swaps: "Choose real cheddar aged over 12 months for trace lactose footprint.",
+                        loads: {}
+                    },
+                    {
+                        name: "Parmesan Cheese",
+                        category: "Dairy & Alternatives",
+                        safety: "safe",
+                        limit: "40g (approx. 1/3 cup)",
+                        notes: "Hard aged cheese. Contains negligible lactose sugars.",
+                        traps: "Avoid pre-shredded packs coated in starches that could contain wheat fillers.",
+                        swaps: "Buy blocks of Parmigiano-Reggiano and grate freshly.",
+                        loads: {}
+                    },
+                    {
+                        name: "Lactose-Free Milk",
+                        category: "Dairy & Alternatives",
+                        safety: "safe",
+                        limit: "250ml (1 cup)",
+                        notes: "Real cow's milk treated with lactase enzymes to split lactose into digestible simple sugars.",
+                        traps: "Ensure the milk is also gluten-free (some milk alternatives use barley enzymes).",
+                        swaps: "Direct 1:1 replacement for standard high-lactose milk.",
+                        loads: {}
+                    },
+                    {
+                        name: "Almond Milk (Unsweetened)",
+                        category: "Dairy & Alternatives",
+                        safety: "safe",
+                        limit: "250ml (1 cup)",
+                        notes: "Naturally low-FODMAP and gluten-free milk alternative.",
+                        traps: "Commonly thickened with Inulin/Chicory Root to create a creamy texture.",
+                        swaps: "Always inspect the back label for 'inulin', 'chicory root', or 'fructo-oligosaccharides'.",
+                        loads: {}
+                    },
+                    {
+                        name: "Coconut Milk (Canned, Full-Fat)",
+                        category: "Dairy & Alternatives",
+                        safety: "moderate",
+                        limit: "60g (approx. 1/4 cup)",
+                        notes: "High in sorbitol at portions above 120g.",
+                        traps: "Coconut milk beverages in cartons are often mixed with high-FODMAP chicory root.",
+                        swaps: "Use in small amounts for safe curry bases, or dilute 50/50 with water.",
+                        loads: { Polyols: 1.0 }
+                    },
+                    {
+                        name: "Rice Milk",
+                        category: "Dairy & Alternatives",
+                        safety: "safe",
+                        limit: "200ml (approx. 3/4 cup)",
+                        notes: "Made from white rice. Fully gluten-free and low-FODMAP.",
+                        traps: "Contains high starch sugars; check for high-fructose sweetening agents.",
+                        swaps: "Very neutral milk alternative for baking and cereals.",
+                        loads: {}
+                    },
+                    {
+                        name: "Greek Yogurt (Lactose-Free)",
+                        category: "Dairy & Alternatives",
+                        safety: "safe",
+                        limit: "200g (1 tub)",
+                        notes: "High in protein. Lactose is pre-digested with lactase.",
+                        traps: "Regular Greek Yogurt contains extremely high levels of lactose.",
+                        swaps: "Ensure the label explicitly states 'Lactose-Free' or 'Zero Lactose'.",
+                        loads: {}
+                    },
+                    {
+                        name: "Cream Cheese",
+                        category: "Dairy & Alternatives",
+                        safety: "moderate",
+                        limit: "40g (approx. 2 tbsp)",
+                        notes: "Unripened cheese containing significant levels of lactose.",
+                        traps: "Easily stacked when spread generously on gluten-free bagels.",
+                        swaps: "Substitute with lactose-free cream cheese or goat's cheese.",
+                        loads: { Lactose: 1.0 }
+                    },
+                    {
+                        name: "Cow's Milk (Standard)",
+                        category: "Dairy & Alternatives",
+                        safety: "high",
+                        limit: "Avoid (High Lactose)",
+                        notes: "Extremely high concentration of lactose. Primary cause of dairy intolerance.",
+                        traps: "Used in most standard baking, cream soups, lattes, and milk chocolates.",
+                        swaps: "Swap for Lactose-Free, Almond, or Rice milk.",
+                        loads: { Lactose: 2.0 }
+                    },
+
+                    // --- PANTRY & SWEETENERS (10 items) ---
+                    {
+                        name: "Garlic-Infused Olive Oil",
+                        category: "Pantry & Sweeteners",
+                        safety: "safe",
+                        limit: "Safe (No Limit)",
+                        notes: "FODMAP fructans do not dissolve in fats. Oil captures flavor without any fructans.",
+                        traps: "Commercial brands can leave garlic pieces at the bottom of the bottle (avoid!).",
+                        swaps: "Ensure the oil is filtered and clear with zero visible sediment.",
+                        loads: {}
+                    },
+                    {
+                        name: "Maple Syrup, Pure",
+                        category: "Pantry & Sweeteners",
+                        safety: "safe",
+                        limit: "20g (approx. 2 tbsp)",
+                        notes: "Fructose levels are highly balanced with glucose. Perfectly safe.",
+                        traps: "Do not buy 'Maple-Flavored Syrup' which is constructed from High-Fructose Corn Syrup.",
+                        swaps: "Ensure the bottle states '100% Pure Maple Syrup' (Grade A or B).",
+                        loads: {}
+                    },
+                    {
+                        name: "White Sugar (Sucrose)",
+                        category: "Pantry & Sweeteners",
+                        safety: "safe",
+                        limit: "24g (approx. 2 tbsp)",
+                        notes: "Equal parts glucose and fructose, facilitating perfect absorption in the small intestine.",
+                        traps: "Beware of brown sugars that have added high-fructose molasses.",
+                        swaps: "Safe sweetener for home baking and coffee.",
+                        loads: {}
+                    },
+                    {
+                        name: "Soy Sauce / Tamari (Gluten-Free)",
+                        category: "Pantry & Sweeteners",
+                        safety: "safe",
+                        limit: "42g (approx. 2 tbsp)",
+                        notes: "Standard Soy Sauce contains trace wheat but is low-FODMAP; Tamari is 100% Gluten-Free.",
+                        traps: "Pre-made Teriyaki sauces contain high concentrations of garlic, onion, and honey.",
+                        swaps: "Use Gluten-Free Tamari and add fresh ginger for stir-fry sauces.",
+                        loads: {}
+                    },
+                    {
+                        name: "Peanut Butter (Smooth/Crunchy)",
+                        category: "Pantry & Sweeteners",
+                        safety: "safe",
+                        limit: "50g (approx. 2 tbsp)",
+                        notes: "Safe sweet/savory spread containing healthy fats and protein.",
+                        traps: "Keto versions of peanut butter contain high-FODMAP sugar alcohols (xylitol).",
+                        swaps: "Ensure the ingredients list contains only peanuts and salt.",
+                        loads: {}
+                    },
+                    {
+                        name: "Honey",
+                        category: "Pantry & Sweeteners",
+                        safety: "high",
+                        limit: "Avoid (High Fructose)",
+                        notes: "Extremely high concentration of excess fructose. Severe trigger.",
+                        traps: "Regularly added as a 'healthy' sweetener in Gluten-Free bars and cereals.",
+                        swaps: "Swap for Pure Maple Syrup or Rice Malt Syrup.",
+                        loads: { Fructose: 2.0 }
+                    },
+                    {
+                        name: "Agave Nectar",
+                        category: "Pantry & Sweeteners",
+                        safety: "high",
+                        limit: "Avoid (High Fructose)",
+                        notes: "Concentrated fructose source. Breaks glucose absorption assistance.",
+                        traps: "Commonly marketed as a healthy low-GI sweetener in organic foods.",
+                        swaps: "Use Pure Maple Syrup.",
+                        loads: { Fructose: 2.0 }
+                    },
+                    {
+                        name: "Applesauce",
+                        category: "Pantry & Sweeteners",
+                        safety: "high",
+                        limit: "Avoid (High Fructose & Sorbitol)",
+                        notes: "Extremely high in fructose and sorbitol. Heavy gastrointestinal load.",
+                        traps: "Used as a fat replacer in Gluten-Free baking recipes. Check GF cupcakes closely.",
+                        swaps: "Use mashed ripe banana (under 35g limit) or pumpkin puree.",
+                        loads: { Fructose: 2.0, Polyols: 1.0 }
+                    },
+                    {
+                        name: "Sorbitol / Xylitol / Isomalt",
+                        category: "Pantry & Sweeteners",
+                        safety: "high",
+                        limit: "Avoid (Sugar Alcohols / Polyols)",
+                        notes: "Highly concentrated polyols. Draws massive water into the bowel, causing severe gas.",
+                        traps: "Extremely common in sugar-free gums, diabetic candy, and keto GF products.",
+                        swaps: "Stick to real white sugar, maple syrup, or stevia.",
+                        loads: { Polyols: 3.0 }
+                    },
+                    {
+                        name: "Chicory Root Fiber (Inulin)",
+                        category: "Pantry & Sweeteners",
+                        safety: "high",
+                        limit: "Avoid (High Fructans)",
+                        notes: "Pure concentrated fructans. Used as a prebiotic fiber but highly fermentable.",
+                        traps: "Hidden in nearly 80% of high-fiber commercial Gluten-Free breads and protein bars.",
+                        swaps: "Choose breads utilizing psyllium husk or potato starch for structure.",
+                        loads: { Fructans: 3.0 }
+                    }
+                ],
+
+                // Init function
+                init() {
+                    // Start with all filters active
+                    this.resetFilters();
+                },
+
+                // Card Expansion helper
+                toggleFoodExpansion(name) {
+                    if (this.expandedFoods.includes(name)) {
+                        this.expandedFoods = this.expandedFoods.filter(f => f !== name);
+                    } else {
+                        this.expandedFoods.push(name);
+                    }
+                },
+
+                // Category Icons dictionary
+                getCategoryIcon(cat) {
+                    const icons = {
+                        "Vegetables & Herbs": "🥦",
+                        "Fruits": "🍓",
+                        "Grains & Baking": "🍞",
+                        "Proteins & Seeds": "🍗",
+                        "Dairy & Alternatives": "🥛",
+                        "Pantry & Sweeteners": "🍯"
+                    };
+                    return icons[cat] || "🍲";
+                },
+
+                // Reset Filters
+                resetFilters() {
+                    this.searchQuery = '';
+                    this.selectedCategory = 'All';
+                    this.selectedSafeties = ['safe', 'moderate', 'high'];
+                },
+
+                // Toggle Safety Filter
+                toggleSafetyFilter(safety) {
+                    if (this.selectedSafeties.includes(safety)) {
+                        this.selectedSafeties = this.selectedSafeties.filter(s => s !== safety);
+                    } else {
+                        this.selectedSafeties.push(safety);
+                    }
+                },
+
+                // Real-time search & filters calculation
+                get filteredFoods() {
+                    return this.foods.filter(food => {
+                        // Category filter
+                        if (this.selectedCategory !== 'All' && food.category !== this.selectedCategory) {
+                            return false;
+                        }
+                        // Safety filter
+                        if (!this.selectedSafeties.includes(food.safety)) {
+                            return false;
+                        }
+                        // Search text query
+                        if (this.searchQuery) {
+                            const query = this.searchQuery.toLowerCase();
+                            const matchName = food.name.toLowerCase().includes(query);
+                            const matchNotes = food.notes ? food.notes.toLowerCase().includes(query) : false;
+                            const matchTraps = food.traps ? food.traps.toLowerCase().includes(query) : false;
+                            const matchSwaps = food.swaps ? food.swaps.toLowerCase().includes(query) : false;
+                            const matchCompounds = food.loads ? Object.keys(food.loads).some(k => k.toLowerCase().includes(query)) : false;
+                            return matchName || matchNotes || matchTraps || matchSwaps || matchCompounds;
+                        }
+                        return true;
+                    });
+                },
+
+                // BASKET MANAGEMENT
+                addToBasket(food) {
+                    if (food.safety === 'high') return; // High FODMAP cannot be added safely
+
+                    // Check if already in basket
+                    const existingIndex = this.basket.findIndex(item => item.name === food.name);
+                    if (existingIndex > -1) {
+                        this.basket[existingIndex].multiplier += 0.25;
+                    } else {
+                        this.basket.push({
+                            name: food.name,
+                            category: food.category,
+                            safety: food.safety,
+                            limit: food.limit,
+                            loads: food.loads || {},
+                            multiplier: 1.0
+                        });
+                    }
+                    // Auto-focus on builder tab so they see it
+                    this.activeTab = 'builder';
+                },
+
+                removeFromBasket(index) {
+                    this.basket.splice(index, 1);
+                },
+
+                adjustMultiplier(index, amount) {
+                    const item = this.basket[index];
+                    item.multiplier = Math.max(0.25, Math.min(3.0, item.multiplier + amount));
+                },
+
+                clearBasket() {
+                    this.basket = [];
+                },
+
+                // REAL-TIME FODMAP STACKING COMPUTATIONS
+                get stackingLoads() {
+                    const totals = {
+                        Fructans: 0,
+                        GOS: 0,
+                        Fructose: 0,
+                        Lactose: 0,
+                        Polyols: 0
+                    };
+
+                    this.basket.forEach(item => {
+                        Object.keys(item.loads).forEach(compound => {
+                            if (totals[compound] !== undefined) {
+                                totals[compound] += (item.loads[compound] * item.multiplier) * 100;
+                            }
+                        });
+                    });
+
+                    return totals;
+                },
+
+                get isStacked() {
+                    return Object.values(this.stackingLoads).some(v => v > 100);
+                },
+
+                getCompoundExplanation(name) {
+                    const explanations = {
+                        Fructans: "Soluble chains of fructose found in onions, garlic, and wheat fiber.",
+                        GOS: "Galacto-oligosaccharides found in beans, lentils, and specific tree nuts.",
+                        Fructose: "Simple monosaccharide sugar; causes osmotic water draw when exceeding glucose ratios.",
+                        Lactose: "Disaccharide dairy sugar; requires active lactase enzymes to split.",
+                        Polyols: "Sugar alcohols (Sorbitol, Mannitol) found in stone fruits, avocados, celery."
+                    };
+                    return explanations[name] || "";
+                },
+
+                // CLINICAL ADVICE GENERATOR FOR HIGH STACKING
+                get stackingRecommendations() {
+                    const recs = [];
+                    const loads = this.stackingLoads;
+
+                    if (loads.Fructans > 100) {
+                        recs.push("Reduce portions of Zucchini, Rolled Oats, or Gluten-Free Bread. Swap garlic/onion flavorings for filtered Garlic-Infused Oil.");
+                    }
+                    if (loads.GOS > 100) {
+                        recs.push("Limit Almonds, canned Black Beans, or Lentils. Ensure canned beans are rinsed extensively with fresh water before cooking.");
+                    }
+                    if (loads.Fructose > 100) {
+                        recs.push("Reduce Ripe Bananas, Blueberries, or Strawberries. Swap table sweeteners for Pure Maple Syrup or rice syrup.");
+                    }
+                    if (loads.Lactose > 100) {
+                        recs.push("Reduce Cream Cheese or soft dairy. Ensure standard milk is replaced with certified Lactose-Free variants.");
+                    }
+                    if (loads.Polyols > 100) {
+                        recs.push("Reduce Celery, Avocado, Bok Choy, or Green Beans. Avoid commercial sugar-free gums containing Sorbitol or Xylitol.");
+                    }
+
+                    // Default suggestion
+                    if (recs.length === 0) {
+                        recs.push("Incorporate zero-load filler options like Carrots, White Rice, Chicken Breast, Eggs, or Potatoes to bulk your meal safely.");
+                    } else {
+                        recs.push("Add neutral zero-load ingredients (Carrots, Potatoes, Chicken, White Rice) to fulfill calorie goals without compound accumulation.");
+                    }
+
+                    return recs;
+                }
+            };
+        }
+    </script>
+</body>
+</html>

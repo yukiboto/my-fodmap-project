@@ -1,0 +1,5 @@
+.venv/
+downloads_cache/
+*.mp4
+temp_audio.m4a
+.vscode/
