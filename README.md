@@ -12,6 +12,8 @@ A mobile-first, single-file web app for checking common foods, dishes, and ingre
 - Paste an ingredient list or menu description to flag common FODMAP and gluten clues.
 - Take a food or label photo on mobile and optionally analyse it with Gemini.
 - Scan a barcode or QR code with a supported browser; barcode products are looked up through Open Food Facts.
+- Open a recipe tab with trusted links to the Monash FODMAP recipe index and FODMAP Everyday.
+- Record meals, symptoms, and FODMAP/gluten notes in a browser-only food diary.
 - Responsive layout designed for small phone screens as well as desktop.
 
 ## Run
