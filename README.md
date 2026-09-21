@@ -4,7 +4,7 @@ A mobile-first, single-file web app for checking common foods, dishes, and ingre
 
 ## Features
 
-- Search 77 common ingredients and dishes, including Japanese dishes such as gyudon (牛丼).
+- Search 143 common ingredients and dishes, including Japanese dishes such as gyudon (牛丼), onigiri, miso soup, yakitori, okonomiyaki, udon, and bento.
 - Switch between English and Japanese labels, food names, and quick answers; Japanese aliases such as 「フムス」「玉ねぎ」「寿司」 are searchable.
 - Forgiving search suggests likely matches for small spelling mistakes such as `humus` or `hummis`.
 - Use the Search button or press Enter after typing a query.
