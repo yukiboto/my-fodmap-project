@@ -10,10 +10,10 @@ A mobile-first, single-file web app for checking common foods, dishes, and ingre
 - Use the Search button or press Enter after typing a query.
 - Filter by FODMAP level, gluten status, and category.
 - Paste an ingredient list or menu description to flag common FODMAP and gluten clues.
-- Take a food or label photo on mobile and optionally analyse it with Gemini.
+- Take a food or label photo on mobile and optionally analyse it with Gemini; detected dish text and readable ingredients can be saved into the diary with a compressed photo thumbnail.
 - Scan a barcode or QR code with a supported browser; barcode products are looked up through Open Food Facts.
 - Open a recipe tab with trusted links to the Monash FODMAP recipe index and FODMAP Everyday.
-- Record meals, symptoms, and FODMAP/gluten notes in a browser-only food diary.
+- Record meals, symptoms, Bristol stool types 1–7, and FODMAP/gluten notes in a browser-only food diary.
 - Responsive layout designed for small phone screens as well as desktop.
 
 ## Run
