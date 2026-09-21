@@ -67,80 +67,80 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen" x-data="fodmapApp()">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen overflow-x-hidden" x-data="fodmapApp()">
 
     <!-- Header Navigation -->
     <header class="bg-white border-b border-slate-100 sticky top-0 z-50 no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between py-2 sm:h-16 gap-2">
                 <!-- Logo -->
-                <div class="flex items-center gap-3">
-                    <div class="bg-emerald-500 text-white p-2.5 rounded-xl shadow-md shadow-emerald-100 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                <div class="flex items-center gap-2.5 shrink-0">
+                    <div class="bg-emerald-500 text-white p-2 rounded-xl shadow-md shadow-emerald-100 flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 sm:w-6 sm:h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
                         </svg>
                     </div>
                     <div>
-                        <span class="font-outfit font-extrabold text-2xl tracking-tight bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">Sustenance</span>
-                        <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider leading-none">FODMAP & GF Navigator</span>
+                        <span class="font-outfit font-extrabold text-xl sm:text-2xl tracking-tight bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">Sustenance</span>
+                        <span class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider leading-none">FODMAP & GF Navigator</span>
                     </div>
                 </div>
 
                 <!-- Nav Tabs -->
-                <nav class="flex space-x-1 sm:space-x-2">
+                <nav class="flex items-center space-x-1 overflow-x-auto pb-1 sm:pb-0 scrollbar-none w-full sm:w-auto">
                     <button 
                         @click="activeTab = 'explore'" 
                         :class="activeTab === 'explore' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:text-emerald-600 hover:bg-slate-50'"
-                        class="px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2"
+                        class="px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 shrink-0"
                     >
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />
                         </svg>
-                                                <span>Explore Foods</span>
+                        <span>Explore</span>
                     </button>
 
                     <button 
                         @click="activeTab = 'scan'" 
                         :class="activeTab === 'scan' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:text-emerald-600 hover:bg-slate-50'"
-                        class="px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2"
+                        class="px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 shrink-0"
                     >
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
                         </svg>
-                        <span>AI Scanner</span>
+                        <span>AI Scan</span>
                     </button>
 
                     
                     <button 
                         @click="activeTab = 'builder'" 
                         :class="activeTab === 'builder' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:text-emerald-600 hover:bg-slate-50'"
-                        class="px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 relative"
+                        class="px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 shrink-0 relative"
                     >
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
-                        <span>Meal Basket</span>
+                        <span>Basket</span>
                         <template x-if="basket.length > 0">
-                            <span class="absolute -top-1 -right-1 bg-rose-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pulse" x-text="basket.length"></span>
+                            <span class="absolute -top-1 -right-1 bg-rose-500 text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse" x-text="basket.length"></span>
                         </template>
                     </button>
 
                     <button 
                         @click="activeTab = 'cheat-sheet'" 
                         :class="activeTab === 'cheat-sheet' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:text-emerald-600 hover:bg-slate-50'"
-                        class="px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2"
+                        class="px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 shrink-0"
                     >
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2Z" />
                         </svg>
-                        <span>Pantry Guide</span>
+                        <span>Guide</span>
                     </button>
                     
                     <button 
                         @click="showEduModal = true" 
-                        class="text-slate-400 hover:text-emerald-600 p-2 rounded-lg transition-all"
+                        class="text-slate-400 hover:text-emerald-600 p-1.5 rounded-lg transition-all shrink-0"
                         title="FODMAP Stacking Education"
                     >
                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -1397,733 +1397,4 @@
                         category: "Fruits",
                         safety: "high",
                         limit: "Avoid (High Fructose/Sorbitol)",
-                        notes: "Contains extreme levels of both excess fructose and sorbitol. Huge IBS trigger.",
-                        traps: "Used as bulk apple puree sweetener in countless Gluten-Free baked goods.",
-                        swaps: "Use papaya, kiwi, or unripe firm banana instead.",
-                        loads: { Fructose: 2.0, Polyols: 1.0 }
-                    },
-                    {
-                        name: "Pears",
-                        category: "Fruits",
-                        safety: "high",
-                        limit: "Avoid (High Fructose/Sorbitol)",
-                        notes: "Like apples, pears have very high excess fructose and sorbitol compounds.",
-                        traps: "Canned pear juices are often used to naturally sweeten baby items or GF snacks.",
-                        swaps: "Choose fresh cantaloupe or orange segments.",
-                        loads: { Fructose: 2.0, Polyols: 1.0 }
-                    },
-                    {
-                        name: "Avocado",
-                        category: "Fruits",
-                        safety: "moderate",
-                        limit: "30g (approx. 1/4 small avocado)",
-                        notes: "Packed with healthy fats, but contains significant sorbitol in standard servings.",
-                        traps: "Guacamole at restaurants is a double threat: high-FODMAP garlic/onion plus high sorbitol.",
-                        swaps: "Mash exactly 30g with lime juice and salt. Avoid pre-made store tubs.",
-                        loads: { Polyols: 1.0 }
-                    },
-
-                    // --- GRAINS & BAKING (16 items) ---
-                    {
-                        name: "Brown Rice",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "180g (cooked)",
-                        notes: "Excellent source of fiber, starch is fully digested in small intestine.",
-                        traps: "Brown rice packets can have garlic oil or wheat emulsifiers added.",
-                        swaps: "Cook dry organic grains from scratch in a simple rice cooker.",
-                        loads: {}
-                    },
-                    {
-                        name: "White Rice (Basmati / Jasmine)",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "190g (cooked)",
-                        notes: "Extremely easy to digest. Absolutely zero FODMAP content.",
-                        traps: "Pre-cooked convenience rice cups often contain onion/garlic seasoning powders.",
-                        swaps: "Cook with water or a homemade, garlic-free bone broth.",
-                        loads: {}
-                    },
-                    {
-                        name: "Quinoa (White / Red)",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "155g (cooked)",
-                        notes: "Complete protein grain that is naturally gluten-free and low-FODMAP.",
-                        traps: "Rinse well to remove saponins, which can mimic IBS irritation.",
-                        swaps: "Use in place of high-FODMAP couscous (which is made from wheat).",
-                        loads: {}
-                    },
-                    {
-                        name: "Oats, Rolled",
-                        category: "Grains & Baking",
-                        safety: "moderate",
-                        limit: "52g (dry weight)",
-                        notes: "Safe up to 52g. Exceeding 75g introduces moderate levels of GOS and fructans.",
-                        traps: "Instant oat packets often use high-FODMAP dried apples or honey flavorings.",
-                        swaps: "Make stovetop oatmeal using rolled oats, lactose-free milk, and pure maple syrup.",
-                        loads: { GOS: 0.8, Fructans: 0.5 }
-                    },
-                    {
-                        name: "Buckwheat Flour",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "100g",
-                        notes: "Despite its name, buckwheat is completely gluten-free and very low FODMAP.",
-                        traps: "Buckwheat pancake mixes often contain wheat flour fillers. Read labels!",
-                        swaps: "Use pure 100% buckwheat flour to make delicious gluten-free crêpes.",
-                        loads: {}
-                    },
-                    {
-                        name: "Cornmeal / Polenta",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "255g (cooked)",
-                        notes: "Finely ground cornstarch that is highly digestible and gluten-free.",
-                        traps: "Polenta rolls can contain dairy cream or high-lactose milk powder.",
-                        swaps: "Slice polenta, brush with garlic oil, and grill for a safe bread swap.",
-                        loads: {}
-                    },
-                    {
-                        name: "Gluten-Free Bread (Commercial)",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "2 slices (62g)",
-                        notes: "Ensures safety from wheat gluten, but check fiber additives carefully.",
-                        traps: "High frequency of added Inulin (Chicory Root), Honey, or Apple fibers to keep bread moist.",
-                        swaps: "Bake homemade gluten-free bread using potato and tapioca starch.",
-                        loads: { Fructans: 0.3 }
-                    },
-                    {
-                        name: "Gluten-Free Pasta (Corn/Rice)",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "145g (cooked)",
-                        notes: "Low FODMAP and gluten-free base using corn/rice combinations.",
-                        traps: "Avoid GF pastas crafted from high-FODMAP bean flours like chickpea or lentil.",
-                        swaps: "Always purchase 100% white/brown rice or corn-based dried pasta.",
-                        loads: {}
-                    },
-                    {
-                        name: "Rice Flour (White / Brown)",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "100g",
-                        notes: "Highly versatile baking starch with zero FODMAP carbohydrates.",
-                        traps: "Check for anti-caking compounds if pre-blended into custom flour mixes.",
-                        swaps: "Use as a direct thickening agent for sauces instead of wheat roux.",
-                        loads: {}
-                    },
-                    {
-                        name: "Tapioca Flour / Starch",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "100g",
-                        notes: "Derived from cassava root. Completely gluten-free and low-FODMAP.",
-                        traps: "Do not confuse with high-FODMAP sweet potato flours.",
-                        swaps: "Perfect for creating stretchy texture in gluten-free baking.",
-                        loads: {}
-                    },
-                    {
-                        name: "Potato Starch",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "100g",
-                        notes: "Pure starch isolate. Highly tolerated in clinical gut trials.",
-                        traps: "Ensure you buy pure potato starch, not instant mashed potato powder.",
-                        swaps: "Blend with rice flour for an excellent GF all-purpose flour baking mix.",
-                        loads: {}
-                    },
-                    {
-                        name: "Sorghum Flour",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "100g",
-                        notes: "Ancient whole grain flour. Safe and high-fiber.",
-                        traps: "Uncommon staple that can be processed on shared wheat machinery.",
-                        swaps: "Provides a delicious, wheat-like crumb in gluten-free breads.",
-                        loads: {}
-                    },
-                    {
-                        name: "Millet (Hulled Grain)",
-                        category: "Grains & Baking",
-                        safety: "safe",
-                        limit: "100g (dry weight)",
-                        notes: "A wonderful, nutty grain with very high B-vitamins and zero FODMAPs.",
-                        traps: "Ensure the pack is certified gluten-free (sometimes rotated with barley crops).",
-                        swaps: "Use as a safe morning cereal similar to porridge or cream of wheat.",
-                        loads: {}
-                    },
-                    {
-                        name: "Wheat Flour (White/Whole)",
-                        category: "Grains & Baking",
-                        safety: "high",
-                        limit: "Avoid (High Fructans & Gluten)",
-                        notes: "Contains high levels of fructan chains and is NOT gluten-free. Serious IBS/Celiac trigger.",
-                        traps: "Present in all standard breads, pastas, pastries, and breadcrumbs.",
-                        swaps: "Substitute with Rice, Tapioca, or Buckwheat flours.",
-                        loads: { Fructans: 2.0 }
-                    },
-                    {
-                        name: "Rye Flour",
-                        category: "Grains & Baking",
-                        safety: "high",
-                        limit: "Avoid (High Fructans & Gluten)",
-                        notes: "Highly concentrated fructans and contains gluten. Not suitable.",
-                        traps: "Often present in high-fiber multigrain bakery slices or crispbreads.",
-                        swaps: "Choose 100% corn-based GF crispbreads.",
-                        loads: { Fructans: 2.0 }
-                    },
-                    {
-                        name: "Barley",
-                        category: "Grains & Baking",
-                        safety: "high",
-                        limit: "Avoid (High Fructans & GOS)",
-                        notes: "Rich in fructans and GOS (galacto-oligosaccharides). Contains gluten.",
-                        traps: "Regularly added to commercial broths, vegetable canned soups, or multi-grain cereals.",
-                        swaps: "Use brown rice or quinoa in soups.",
-                        loads: { Fructans: 2.0, GOS: 1.0 }
-                    },
-
-                    // --- PROTEINS & SEEDS (16 items) ---
-                    {
-                        name: "Chicken Breast",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "Safe (No Limit)",
-                        notes: "Pure protein source containing absolutely no FODMAP sugars. Perfect safety rating.",
-                        traps: "Rotisserie or pre-marinated chicken breasts are saturated in garlic/onion powder.",
-                        swaps: "Buy fresh organic raw chicken, season with salt, pepper, and garlic-infused oil.",
-                        loads: {}
-                    },
-                    {
-                        name: "Beef, Lean Cuts",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "Safe (No Limit)",
-                        notes: "FODMAPs are carbohydrates; animal proteins have zero sugars.",
-                        traps: "Pre-packed burgers or meatloaf contain wheat crumbs (gluten) and onion pieces.",
-                        swaps: "Form your own burger patties with pure ground beef and fresh herbs.",
-                        loads: {}
-                    },
-                    {
-                        name: "Pork (Tenderloin / Chops)",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "Safe (No Limit)",
-                        notes: "Zero FODMAP and naturally gluten-free protein source.",
-                        traps: "Pork sausages or bacon can use wheat fillers, onion extracts, or high-fructose cures.",
-                        swaps: "Ensure bacon is dry-cured with simple cane sugar and no artificial celery powders.",
-                        loads: {}
-                    },
-                    {
-                        name: "Salmon, Fresh",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "Safe (No Limit)",
-                        notes: "Rich in anti-inflammatory Omega-3 fatty acids, with zero sugar or gluten.",
-                        traps: "Avoid pre-seasoned salmon containing soy sauce with wheat or honey glazes.",
-                        swaps: "Pan-sear fresh salmon with olive oil, rosemary, and lemon juice.",
-                        loads: {}
-                    },
-                    {
-                        name: "Eggs",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "Safe (No Limit)",
-                        notes: "Highly bioavailable protein source with zero FODMAP footprint.",
-                        traps: "Scrambled eggs in buffets often contain high-lactose cow's milk.",
-                        swaps: "Prepare scrambles using pure eggs, salt, and lactose-free milk or water.",
-                        loads: {}
-                    },
-                    {
-                        name: "Tofu, Firm / Extra-Firm",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "170g (approx. 1 cup block)",
-                        notes: "GOS is water-soluble. Firm tofu is pressed, draining out most FODMAPs into the water.",
-                        traps: "Silken tofu is NOT pressed and retains high amounts of GOS (avoid!).",
-                        swaps: "Always purchase Firm or Extra-Firm tofu, and drain thoroughly at home.",
-                        loads: { GOS: 0.2 }
-                    },
-                    {
-                        name: "Tempeh",
-                        category: "Proteins & Seeds",
-                        safety: "moderate",
-                        limit: "100g",
-                        notes: "Fermented soy protein. Contains small amounts of GOS and fructans.",
-                        traps: "Check for added high-FODMAP grains like barley or wheat inside artisan tempeh.",
-                        swaps: "Purchase 100% pure organic soy tempeh.",
-                        loads: { GOS: 1.0, Fructans: 0.5 }
-                    },
-                    {
-                        name: "Almonds",
-                        category: "Proteins & Seeds",
-                        safety: "moderate",
-                        limit: "12g (approx. 10 nuts)",
-                        notes: "Portion limits are highly sensitive. Larger amounts have high GOS levels.",
-                        traps: "Almond flours in Gluten-Free baking easily exceed this limit per slice.",
-                        swaps: "Swap for Macadamia nuts or Walnuts which are much safer and less reactive.",
-                        loads: { GOS: 1.0 }
-                    },
-                    {
-                        name: "Macadamia Nuts",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "40g (approx. 20 nuts)",
-                        notes: "Extremely low FODMAP. High in healthy monounsaturated fats.",
-                        traps: "Avoid chocolate-coated versions containing high lactose milk.",
-                        swaps: "Perfect snack substitute for high-FODMAP cashews or pistachios.",
-                        loads: {}
-                    },
-                    {
-                        name: "Walnuts",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "30g (approx. 10 halves)",
-                        notes: "Very safe and contains only trace FODMAP carbohydrates.",
-                        traps: "Trail mixes often cross-contaminate walnuts with dried raisins or cashews.",
-                        swaps: "An excellent crunchy garnish for salads or gluten-free oatmeal.",
-                        loads: {}
-                    },
-                    {
-                        name: "Pumpkin Seeds (Pepitas)",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "23g (approx. 2 tbsp)",
-                        notes: "Excellent source of zinc and magnesium with low FODMAP loads.",
-                        traps: "Flavored commercial seeds can contain onion powder or maltodextrin from wheat.",
-                        swaps: "Buy raw pepitas and roast them with salt and garlic-infused olive oil.",
-                        loads: {}
-                    },
-                    {
-                        name: "Sesame Seeds",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "11g (approx. 1 tbsp)",
-                        notes: "Safe garnish. High in calcium and fiber.",
-                        traps: "Tahini (sesame paste) is highly concentrated and contains GOS (safe limit: 1 tbsp).",
-                        swaps: "Lightly toast and sprinkle on top of safe stir-frys.",
-                        loads: {}
-                    },
-                    {
-                        name: "Chia Seeds",
-                        category: "Proteins & Seeds",
-                        safety: "moderate",
-                        limit: "24g (approx. 2 tbsp)",
-                        notes: "Highly absorptive fiber. Large servings contain moderate fructans.",
-                        traps: "Chia puddings in cafés are often prepared with high-lactose cow's milk or sweetened with honey.",
-                        swaps: "Prepare at home using almond milk and pure maple syrup.",
-                        loads: { Fructans: 1.0 }
-                    },
-                    {
-                        name: "Peanuts",
-                        category: "Proteins & Seeds",
-                        safety: "safe",
-                        limit: "28g (approx. 32 nuts)",
-                        notes: "Highly tolerated, safe and contains zero gluten.",
-                        traps: "Flavored 'dry roasted' peanuts are coated in high-FODMAP garlic and onion powders.",
-                        swaps: "Stick to simple salted roasted peanuts with no extra spices.",
-                        loads: {}
-                    },
-                    {
-                        name: "Black Beans (Canned & Rinsed)",
-                        category: "Proteins & Seeds",
-                        safety: "moderate",
-                        limit: "40g (approx. 1/4 cup)",
-                        notes: "Canning leaches water-soluble GOS out of beans. Thoroughly rinsing reduces FODMAPs significantly.",
-                        traps: "Dry cooked beans or un-rinsed canned beans remain extremely high in GOS (avoid!).",
-                        swaps: "Drain canned beans, wash under running water for 30 seconds before eating.",
-                        loads: { GOS: 1.0 }
-                    },
-                    {
-                        name: "Lentils (Canned & Rinsed)",
-                        category: "Proteins & Seeds",
-                        safety: "moderate",
-                        limit: "46g (approx. 1/4 cup)",
-                        notes: "Similar to black beans, GOS is water-soluble. Canning water acts as a sink.",
-                        traps: "Dried boiled lentils contain 3-4x the FODMAP concentration (avoid!).",
-                        swaps: "Always choose canned, rinse extensively, and stick to the 46g serving limit.",
-                        loads: { GOS: 1.0 }
-                    },
-
-                    // --- DAIRY & ALTERNATIVES (10 items) ---
-                    {
-                        name: "Butter",
-                        category: "Dairy & Alternatives",
-                        safety: "safe",
-                        limit: "Safe (No Limit)",
-                        notes: "Butter is pure fat; lactose sugars are practically nonexistent. Fully safe.",
-                        traps: "Check 'spreadable' butters for added high-lactose whey powder or milk solids.",
-                        swaps: "Use high-quality grass-fed butter for cooking and baking.",
-                        loads: {}
-                    },
-                    {
-                        name: "Cheddar Cheese (Aged)",
-                        category: "Dairy & Alternatives",
-                        safety: "safe",
-                        limit: "40g (approx. 2 slices)",
-                        notes: "Aging cheeses allows bacteria to consume lactose. Aged cheeses are naturally low-lactose.",
-                        traps: "Processed cheese slices or squeezy cheese contain added high-lactose milk powders.",
-                        swaps: "Choose real cheddar aged over 12 months for trace lactose footprint.",
-                        loads: {}
-                    },
-                    {
-                        name: "Parmesan Cheese",
-                        category: "Dairy & Alternatives",
-                        safety: "safe",
-                        limit: "40g (approx. 1/3 cup)",
-                        notes: "Hard aged cheese. Contains negligible lactose sugars.",
-                        traps: "Avoid pre-shredded packs coated in starches that could contain wheat fillers.",
-                        swaps: "Buy blocks of Parmigiano-Reggiano and grate freshly.",
-                        loads: {}
-                    },
-                    {
-                        name: "Lactose-Free Milk",
-                        category: "Dairy & Alternatives",
-                        safety: "safe",
-                        limit: "250ml (1 cup)",
-                        notes: "Real cow's milk treated with lactase enzymes to split lactose into digestible simple sugars.",
-                        traps: "Ensure the milk is also gluten-free (some milk alternatives use barley enzymes).",
-                        swaps: "Direct 1:1 replacement for standard high-lactose milk.",
-                        loads: {}
-                    },
-                    {
-                        name: "Almond Milk (Unsweetened)",
-                        category: "Dairy & Alternatives",
-                        safety: "safe",
-                        limit: "250ml (1 cup)",
-                        notes: "Naturally low-FODMAP and gluten-free milk alternative.",
-                        traps: "Commonly thickened with Inulin/Chicory Root to create a creamy texture.",
-                        swaps: "Always inspect the back label for 'inulin', 'chicory root', or 'fructo-oligosaccharides'.",
-                        loads: {}
-                    },
-                    {
-                        name: "Coconut Milk (Canned, Full-Fat)",
-                        category: "Dairy & Alternatives",
-                        safety: "moderate",
-                        limit: "60g (approx. 1/4 cup)",
-                        notes: "High in sorbitol at portions above 120g.",
-                        traps: "Coconut milk beverages in cartons are often mixed with high-FODMAP chicory root.",
-                        swaps: "Use in small amounts for safe curry bases, or dilute 50/50 with water.",
-                        loads: { Polyols: 1.0 }
-                    },
-                    {
-                        name: "Rice Milk",
-                        category: "Dairy & Alternatives",
-                        safety: "safe",
-                        limit: "200ml (approx. 3/4 cup)",
-                        notes: "Made from white rice. Fully gluten-free and low-FODMAP.",
-                        traps: "Contains high starch sugars; check for high-fructose sweetening agents.",
-                        swaps: "Very neutral milk alternative for baking and cereals.",
-                        loads: {}
-                    },
-                    {
-                        name: "Greek Yogurt (Lactose-Free)",
-                        category: "Dairy & Alternatives",
-                        safety: "safe",
-                        limit: "200g (1 tub)",
-                        notes: "High in protein. Lactose is pre-digested with lactase.",
-                        traps: "Regular Greek Yogurt contains extremely high levels of lactose.",
-                        swaps: "Ensure the label explicitly states 'Lactose-Free' or 'Zero Lactose'.",
-                        loads: {}
-                    },
-                    {
-                        name: "Cream Cheese",
-                        category: "Dairy & Alternatives",
-                        safety: "moderate",
-                        limit: "40g (approx. 2 tbsp)",
-                        notes: "Unripened cheese containing significant levels of lactose.",
-                        traps: "Easily stacked when spread generously on gluten-free bagels.",
-                        swaps: "Substitute with lactose-free cream cheese or goat's cheese.",
-                        loads: { Lactose: 1.0 }
-                    },
-                    {
-                        name: "Cow's Milk (Standard)",
-                        category: "Dairy & Alternatives",
-                        safety: "high",
-                        limit: "Avoid (High Lactose)",
-                        notes: "Extremely high concentration of lactose. Primary cause of dairy intolerance.",
-                        traps: "Used in most standard baking, cream soups, lattes, and milk chocolates.",
-                        swaps: "Swap for Lactose-Free, Almond, or Rice milk.",
-                        loads: { Lactose: 2.0 }
-                    },
-
-                    // --- PANTRY & SWEETENERS (10 items) ---
-                    {
-                        name: "Garlic-Infused Olive Oil",
-                        category: "Pantry & Sweeteners",
-                        safety: "safe",
-                        limit: "Safe (No Limit)",
-                        notes: "FODMAP fructans do not dissolve in fats. Oil captures flavor without any fructans.",
-                        traps: "Commercial brands can leave garlic pieces at the bottom of the bottle (avoid!).",
-                        swaps: "Ensure the oil is filtered and clear with zero visible sediment.",
-                        loads: {}
-                    },
-                    {
-                        name: "Maple Syrup, Pure",
-                        category: "Pantry & Sweeteners",
-                        safety: "safe",
-                        limit: "20g (approx. 2 tbsp)",
-                        notes: "Fructose levels are highly balanced with glucose. Perfectly safe.",
-                        traps: "Do not buy 'Maple-Flavored Syrup' which is constructed from High-Fructose Corn Syrup.",
-                        swaps: "Ensure the bottle states '100% Pure Maple Syrup' (Grade A or B).",
-                        loads: {}
-                    },
-                    {
-                        name: "White Sugar (Sucrose)",
-                        category: "Pantry & Sweeteners",
-                        safety: "safe",
-                        limit: "24g (approx. 2 tbsp)",
-                        notes: "Equal parts glucose and fructose, facilitating perfect absorption in the small intestine.",
-                        traps: "Beware of brown sugars that have added high-fructose molasses.",
-                        swaps: "Safe sweetener for home baking and coffee.",
-                        loads: {}
-                    },
-                    {
-                        name: "Soy Sauce / Tamari (Gluten-Free)",
-                        category: "Pantry & Sweeteners",
-                        safety: "safe",
-                        limit: "42g (approx. 2 tbsp)",
-                        notes: "Standard Soy Sauce contains trace wheat but is low-FODMAP; Tamari is 100% Gluten-Free.",
-                        traps: "Pre-made Teriyaki sauces contain high concentrations of garlic, onion, and honey.",
-                        swaps: "Use Gluten-Free Tamari and add fresh ginger for stir-fry sauces.",
-                        loads: {}
-                    },
-                    {
-                        name: "Peanut Butter (Smooth/Crunchy)",
-                        category: "Pantry & Sweeteners",
-                        safety: "safe",
-                        limit: "50g (approx. 2 tbsp)",
-                        notes: "Safe sweet/savory spread containing healthy fats and protein.",
-                        traps: "Keto versions of peanut butter contain high-FODMAP sugar alcohols (xylitol).",
-                        swaps: "Ensure the ingredients list contains only peanuts and salt.",
-                        loads: {}
-                    },
-                    {
-                        name: "Honey",
-                        category: "Pantry & Sweeteners",
-                        safety: "high",
-                        limit: "Avoid (High Fructose)",
-                        notes: "Extremely high concentration of excess fructose. Severe trigger.",
-                        traps: "Regularly added as a 'healthy' sweetener in Gluten-Free bars and cereals.",
-                        swaps: "Swap for Pure Maple Syrup or Rice Malt Syrup.",
-                        loads: { Fructose: 2.0 }
-                    },
-                    {
-                        name: "Agave Nectar",
-                        category: "Pantry & Sweeteners",
-                        safety: "high",
-                        limit: "Avoid (High Fructose)",
-                        notes: "Concentrated fructose source. Breaks glucose absorption assistance.",
-                        traps: "Commonly marketed as a healthy low-GI sweetener in organic foods.",
-                        swaps: "Use Pure Maple Syrup.",
-                        loads: { Fructose: 2.0 }
-                    },
-                    {
-                        name: "Applesauce",
-                        category: "Pantry & Sweeteners",
-                        safety: "high",
-                        limit: "Avoid (High Fructose & Sorbitol)",
-                        notes: "Extremely high in fructose and sorbitol. Heavy gastrointestinal load.",
-                        traps: "Used as a fat replacer in Gluten-Free baking recipes. Check GF cupcakes closely.",
-                        swaps: "Use mashed ripe banana (under 35g limit) or pumpkin puree.",
-                        loads: { Fructose: 2.0, Polyols: 1.0 }
-                    },
-                    {
-                        name: "Sorbitol / Xylitol / Isomalt",
-                        category: "Pantry & Sweeteners",
-                        safety: "high",
-                        limit: "Avoid (Sugar Alcohols / Polyols)",
-                        notes: "Highly concentrated polyols. Draws massive water into the bowel, causing severe gas.",
-                        traps: "Extremely common in sugar-free gums, diabetic candy, and keto GF products.",
-                        swaps: "Stick to real white sugar, maple syrup, or stevia.",
-                        loads: { Polyols: 3.0 }
-                    },
-                    {
-                        name: "Chicory Root Fiber (Inulin)",
-                        category: "Pantry & Sweeteners",
-                        safety: "high",
-                        limit: "Avoid (High Fructans)",
-                        notes: "Pure concentrated fructans. Used as a prebiotic fiber but highly fermentable.",
-                        traps: "Hidden in nearly 80% of high-fiber commercial Gluten-Free breads and protein bars.",
-                        swaps: "Choose breads utilizing psyllium husk or potato starch for structure.",
-                        loads: { Fructans: 3.0 }
-                    }
-                ],
-
-                // Init function
-                init() {
-                    // Start with all filters active
-                    this.resetFilters();
-                },
-
-                // Card Expansion helper
-                toggleFoodExpansion(name) {
-                    if (this.expandedFoods.includes(name)) {
-                        this.expandedFoods = this.expandedFoods.filter(f => f !== name);
-                    } else {
-                        this.expandedFoods.push(name);
-                    }
-                },
-
-                // Category Icons dictionary
-                getCategoryIcon(cat) {
-                    const icons = {
-                        "Vegetables & Herbs": "🥦",
-                        "Fruits": "🍓",
-                        "Grains & Baking": "🍞",
-                        "Proteins & Seeds": "🍗",
-                        "Dairy & Alternatives": "🥛",
-                        "Pantry & Sweeteners": "🍯"
-                    };
-                    return icons[cat] || "🍲";
-                },
-
-                // Reset Filters
-                resetFilters() {
-                    this.searchQuery = '';
-                    this.selectedCategory = 'All';
-                    this.selectedSafeties = ['safe', 'moderate', 'high'];
-                },
-
-                // Toggle Safety Filter
-                toggleSafetyFilter(safety) {
-                    if (this.selectedSafeties.includes(safety)) {
-                        this.selectedSafeties = this.selectedSafeties.filter(s => s !== safety);
-                    } else {
-                        this.selectedSafeties.push(safety);
-                    }
-                },
-
-                // Real-time search & filters calculation
-                get filteredFoods() {
-                    return this.foods.filter(food => {
-                        // Category filter
-                        if (this.selectedCategory !== 'All' && food.category !== this.selectedCategory) {
-                            return false;
-                        }
-                        // Safety filter
-                        if (!this.selectedSafeties.includes(food.safety)) {
-                            return false;
-                        }
-                        // Search text query
-                        if (this.searchQuery) {
-                            const query = this.searchQuery.toLowerCase();
-                            const matchName = food.name.toLowerCase().includes(query);
-                            const matchNotes = food.notes ? food.notes.toLowerCase().includes(query) : false;
-                            const matchTraps = food.traps ? food.traps.toLowerCase().includes(query) : false;
-                            const matchSwaps = food.swaps ? food.swaps.toLowerCase().includes(query) : false;
-                            const matchCompounds = food.loads ? Object.keys(food.loads).some(k => k.toLowerCase().includes(query)) : false;
-                            return matchName || matchNotes || matchTraps || matchSwaps || matchCompounds;
-                        }
-                        return true;
-                    });
-                },
-
-                // BASKET MANAGEMENT
-                addToBasket(food) {
-                    if (food.safety === 'high') return; // High FODMAP cannot be added safely
-
-                    // Check if already in basket
-                    const existingIndex = this.basket.findIndex(item => item.name === food.name);
-                    if (existingIndex > -1) {
-                        this.basket[existingIndex].multiplier += 0.25;
-                    } else {
-                        this.basket.push({
-                            name: food.name,
-                            category: food.category,
-                            safety: food.safety,
-                            limit: food.limit,
-                            loads: food.loads || {},
-                            multiplier: 1.0
-                        });
-                    }
-                    // Auto-focus on builder tab so they see it
-                    this.activeTab = 'builder';
-                },
-
-                removeFromBasket(index) {
-                    this.basket.splice(index, 1);
-                },
-
-                adjustMultiplier(index, amount) {
-                    const item = this.basket[index];
-                    item.multiplier = Math.max(0.25, Math.min(3.0, item.multiplier + amount));
-                },
-
-                clearBasket() {
-                    this.basket = [];
-                },
-
-                // REAL-TIME FODMAP STACKING COMPUTATIONS
-                get stackingLoads() {
-                    const totals = {
-                        Fructans: 0,
-                        GOS: 0,
-                        Fructose: 0,
-                        Lactose: 0,
-                        Polyols: 0
-                    };
-
-                    this.basket.forEach(item => {
-                        Object.keys(item.loads).forEach(compound => {
-                            if (totals[compound] !== undefined) {
-                                totals[compound] += (item.loads[compound] * item.multiplier) * 100;
-                            }
-                        });
-                    });
-
-                    return totals;
-                },
-
-                get isStacked() {
-                    return Object.values(this.stackingLoads).some(v => v > 100);
-                },
-
-                getCompoundExplanation(name) {
-                    const explanations = {
-                        Fructans: "Soluble chains of fructose found in onions, garlic, and wheat fiber.",
-                        GOS: "Galacto-oligosaccharides found in beans, lentils, and specific tree nuts.",
-                        Fructose: "Simple monosaccharide sugar; causes osmotic water draw when exceeding glucose ratios.",
-                        Lactose: "Disaccharide dairy sugar; requires active lactase enzymes to split.",
-                        Polyols: "Sugar alcohols (Sorbitol, Mannitol) found in stone fruits, avocados, celery."
-                    };
-                    return explanations[name] || "";
-                },
-
-                // CLINICAL ADVICE GENERATOR FOR HIGH STACKING
-                get stackingRecommendations() {
-                    const recs = [];
-                    const loads = this.stackingLoads;
-
-                    if (loads.Fructans > 100) {
-                        recs.push("Reduce portions of Zucchini, Rolled Oats, or Gluten-Free Bread. Swap garlic/onion flavorings for filtered Garlic-Infused Oil.");
-                    }
-                    if (loads.GOS > 100) {
-                        recs.push("Limit Almonds, canned Black Beans, or Lentils. Ensure canned beans are rinsed extensively with fresh water before cooking.");
-                    }
-                    if (loads.Fructose > 100) {
-                        recs.push("Reduce Ripe Bananas, Blueberries, or Strawberries. Swap table sweeteners for Pure Maple Syrup or rice syrup.");
-                    }
-                    if (loads.Lactose > 100) {
-                        recs.push("Reduce Cream Cheese or soft dairy. Ensure standard milk is replaced with certified Lactose-Free variants.");
-                    }
-                    if (loads.Polyols > 100) {
-                        recs.push("Reduce Celery, Avocado, Bok Choy, or Green Beans. Avoid commercial sugar-free gums containing Sorbitol or Xylitol.");
-                    }
-
-                    // Default suggestion
-                    if (recs.length === 0) {
-                        recs.push("Incorporate zero-load filler options like Carrots, White Rice, Chicken Breast, Eggs, or Potatoes to bulk your meal safely.");
-                    } else {
-                        recs.push("Add neutral zero-load ingredients (Carrots, Potatoes, Chicken, White Rice) to fulfill calorie goals without compound accumulation.");
-                    }
-
-                    return recs;
-                }
-            };
-        }
-    </script>
-</body>
-</html>
+                        notes: "Contains
