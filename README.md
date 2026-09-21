@@ -1,40 +1,22 @@
-# 🥗 Sustenance | Low-FODMAP & Gluten-Free Navigator
+# Sustenance — FODMAP & Gluten-Free Food Checker
 
-A clinically-inspired, standalone web application for managing digestive health. This tool helps users navigate over 75+ lab-verified ingredients, track safe portion thresholds, and monitor "FODMAP Stacking" in real-time.
+A mobile-first, single-file web app for checking common foods, dishes, and ingredient lists for low-FODMAP and gluten-free clues.
 
----
+## Features
 
-## 🚀 Features
+- Search 76 common ingredients and dishes.
+- Filter by FODMAP level, gluten status, and category.
+- Paste an ingredient list or menu description to flag common FODMAP and gluten clues.
+- Take a food or label photo on mobile and optionally analyse it with Gemini.
+- Scan a barcode or QR code with a supported browser; barcode products are looked up through Open Food Facts.
+- Responsive layout designed for small phone screens as well as desktop.
 
-- **Food Explorer**: Search a database of 75+ ingredients categorized by safety levels (Safe, Moderate, High).
-- **Meal Basket Builder**: Add ingredients to a virtual "plate" and adjust portion sizes.
-- **FODMAP Stacking Dashboard**: Visual meters track the cumulative load of biochemical triggers (Fructans, GOS, Fructose, Lactose, Polyols).
-- **Clinical Education**: Built-in guides explaining the science of FODMAPs and how to avoid digestive distress.
-- **Printable Reports**: Generate a clean, clinical meal analysis report for dietitians or personal tracking.
+## Run
 
----
+Open index.html in a browser, or serve the folder over HTTPS/local development server for camera access.
 
-## 🛠️ How to Use
+Photo analysis is optional and requires a Gemini API key entered in the app. The key is kept in that browser's local storage. Ingredient checks and barcode lookups do not require a Gemini key.
 
-1. **Explore**: Use the search bar or category filters to find foods.
-2. **Add to Plate**: Click "Add to Plate" on any safe or moderate ingredient.
-3. **Customize**: Go to the "Meal Basket" tab to adjust portion multipliers (e.g., 0.5x, 1.5x).
-4. **Monitor**: Watch the "FODMAP Accumulation" dashboard. If any bar turns red (>100%), the app provides specific swap advice to prevent stacking.
-5. **Print**: Use the print button to generate a PDF or hard copy of your meal plan.
+## Important limitations
 
----
-
-## 💻 Technical Details
-
-- **Single File**: The entire application is contained within `index.html`.
-- **Frameworks**: 
-  - [Tailwind CSS](https://tailwindcss.com/) for styling.
-  - [Alpine.js](https://alpinejs.dev/) for reactive logic.
-- **No Backend Required**: Runs entirely in the browser.
-
----
-
-## ⚖️ Disclaimer
-
-*Portion limits inspired by Monash University guidelines. Always consult a certified GI Dietitian before modifying medical nutrition therapies.*
-
+This is an educational screening tool, not a diagnosis or a gluten-free certification. FODMAP status depends on portion, preparation, brand, and the individual's reintroduction stage. Open Food Facts data may be incomplete. People with coeliac disease, allergies, or significant symptoms should verify the current manufacturer label and seek qualified medical advice.
