@@ -20,7 +20,7 @@ A mobile-first, single-file web app for checking common foods, dishes, and ingre
 
 Open index.html in a browser, or serve the folder over HTTPS/local development server for camera access.
 
-Photo analysis is optional and requires a Gemini API key entered in the app. The key is kept in that browser's local storage. Ingredient checks and barcode lookups do not require a Gemini key.
+Photo analysis is optional and requires a Gemini API key entered in the app. It uses Gemini 3.6 Flash through the Interactions API, sends each request with `store:false`, and keeps the key in that browser's local storage. Ingredient checks and barcode lookups do not require a Gemini key.
 
 ## Important limitations
 
