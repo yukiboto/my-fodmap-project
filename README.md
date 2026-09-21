@@ -4,9 +4,10 @@ A mobile-first, single-file web app for checking common foods, dishes, and ingre
 
 ## Features
 
-- Search 76 common ingredients and dishes.
+- Search 77 common ingredients and dishes, including Japanese dishes such as gyudon (牛丼).
 - Switch between English and Japanese labels, food names, and quick answers; Japanese aliases such as 「フムス」「玉ねぎ」「寿司」 are searchable.
 - Forgiving search suggests likely matches for small spelling mistakes such as `humus` or `hummis`.
+- Use the Search button or press Enter after typing a query.
 - Filter by FODMAP level, gluten status, and category.
 - Paste an ingredient list or menu description to flag common FODMAP and gluten clues.
 - Take a food or label photo on mobile and optionally analyse it with Gemini.
